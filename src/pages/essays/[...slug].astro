@@ -1,0 +1,37 @@
+---
+import { getCollection, render } from 'astro:content';
+import EssayLayout from '../../layouts/EssayLayout.astro';
+
+const entryPath = (entry: { id: string; slug?: string }) => entry.slug ?? entry.id;
+const entryLocale = (entry: { id: string; slug?: string }) => entryPath(entry).split('/')[0] ?? 'en';
+const entryStem = (entry: { id: string; slug?: string }) => entryPath(entry).split('/').slice(1).join('/');
+
+export async function getStaticPaths() {
+  const essays = await getCollection('essays');
+
+  return essays.map((essay) => ({
+    params: { slug: essay.slug ?? essay.id },
+    props: { essay },
+  }));
+}
+
+const { essay } = Astro.props;
+const { Content } = await render(essay);
+const lang = entryLocale(essay) === 'ko' ? 'ko' : 'en';
+const siblingEssays = (await getCollection('essays', ({ data }) => !data.draft))
+  .filter((entry) => entryStem(entry) === entryStem(essay))
+  .sort((a, b) => {
+    const aPriority = entryLocale(a) === 'en' ? 0 : 1;
+    const bPriority = entryLocale(b) === 'en' ? 0 : 1;
+    return aPriority - bPriority;
+  });
+const alternateVersions = siblingEssays.map((entry) => ({
+  lang: entryLocale(entry).toUpperCase(),
+  href: `/essays/${entryPath(entry)}/`,
+  active: entryPath(entry) === entryPath(essay),
+}));
+---
+
+<EssayLayout {...essay.data} lang={lang} alternateVersions={alternateVersions}>
+  <Content />
+</EssayLayout>

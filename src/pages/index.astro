@@ -1,0 +1,92 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const entryPath = (entry: { id: string; slug?: string }) => entry.slug ?? entry.id;
+const entryLocale = (entry: { id: string; slug?: string }) => entryPath(entry).split('/')[0] ?? 'en';
+const entryStem = (entry: { id: string; slug?: string }) => entryPath(entry).split('/').slice(1).join('/');
+
+const localePriority = (path: string) => {
+  const locale = path.split('/')[0];
+  if (locale === 'en') return 0;
+  if (locale === 'ko') return 1;
+  return 2;
+};
+
+const essays = (await getCollection('essays', ({ data }) => !data.draft)).sort((a, b) => {
+  const localeDelta = localePriority(entryPath(a)) - localePriority(entryPath(b));
+  if (localeDelta !== 0) return localeDelta;
+  return b.data.date.valueOf() - a.data.date.valueOf();
+});
+
+const groupedEssays = Array.from(
+  essays.reduce((map, essay) => {
+    const key = entryStem(essay);
+    const current = map.get(key) ?? [];
+    current.push(essay);
+    map.set(key, current);
+    return map;
+  }, new Map())
+).map(([, versions]) => {
+  const orderedVersions = [...versions].sort(
+    (a, b) => localePriority(entryPath(a)) - localePriority(entryPath(b))
+  );
+  const primary = orderedVersions[0];
+  const primaryLocale = entryLocale(primary);
+
+  return {
+    primary,
+    versions: orderedVersions.map((essay) => ({
+      lang: entryLocale(essay).toUpperCase(),
+      href: `/essays/${entryPath(essay)}/`,
+      active: entryLocale(essay) === primaryLocale,
+    })),
+  };
+});
+
+const formatted = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<BaseLayout
+  title="Essays"
+  description="A personal archive of essays on technology, work, and thought."
+  lang="en"
+>
+  <main class="page-shell index-page">
+    <section class="index-intro">
+      <p class="index-label">Personal Essays</p>
+      <h1 class="index-title">Essays</h1>
+      <p class="index-description">A personal archive of essays on technology, work, and thought.</p>
+    </section>
+
+    <ul class="essay-index-list">
+      {groupedEssays.map(({ primary, versions }) => (
+        <li class="essay-index-item">
+          <div class="essay-index-entry">
+            <div class="essay-index-locales" aria-label="Available essay languages">
+              {versions.map((version) => (
+                <a
+                  href={version.href}
+                  class:list={['essay-index-locale', version.active && 'is-active']}
+                >
+                  {version.lang}
+                </a>
+              ))}
+            </div>
+
+            <a href={`/essays/${entryPath(primary)}/`} class="essay-index-link">
+              <h2 class="essay-index-title-text">{primary.data.title}</h2>
+              {primary.data.subtitle && <p class="essay-index-subtitle">{primary.data.subtitle}</p>}
+              <p class="essay-index-date">{formatted.format(primary.data.date)}</p>
+              <p class="essay-index-description-text">{primary.data.description}</p>
+            </a>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </main>
+</BaseLayout>

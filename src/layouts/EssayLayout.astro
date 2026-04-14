@@ -1,0 +1,89 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  subtitle?: string;
+  ogImage?: string;
+  draft?: boolean;
+  lang?: string;
+  tags?: string[];
+  alternateVersions?: Array<{
+    lang: string;
+    href: string;
+    active: boolean;
+  }>;
+}
+
+const {
+  title,
+  description,
+  date,
+  subtitle,
+  ogImage,
+  draft = false,
+  lang = 'en',
+  tags = [],
+  alternateVersions = [],
+} = Astro.props;
+
+const dateLocale = lang === 'ko' ? 'ko-KR' : 'en-US';
+const formattedDate = new Intl.DateTimeFormat(dateLocale, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(date);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  ogType="article"
+  noindex={draft}
+  lang={lang}
+  publishedTime={date}
+  tags={tags}
+  alternates={alternateVersions.map((version) => ({
+    lang: version.lang.toLowerCase(),
+    href: version.href,
+    default: version.lang.toLowerCase() === 'en',
+  }))}
+>
+  <main class="page-shell essay-page">
+    <a href="/" class="essay-backlink">← Essays</a>
+
+    <article class="essay-article">
+      <header class="essay-header">
+        {alternateVersions.length > 1 && (
+          <nav class="essay-locale-switch" aria-label="Essay language versions">
+            {alternateVersions.map((version) => (
+              <a
+                href={version.href}
+                aria-current={version.active ? 'page' : undefined}
+                class:list={['essay-locale-link', version.active && 'is-active']}
+              >
+                {version.lang}
+              </a>
+            ))}
+          </nav>
+        )}
+
+        <h1 class="essay-title">{title}</h1>
+        {subtitle && <p class="essay-subtitle">{subtitle}</p>}
+        <p class="essay-date">{formattedDate}</p>
+        <div class="essay-header-rule" aria-hidden="true"></div>
+      </header>
+
+      <div class="prose max-w-none essay-prose">
+        <slot />
+      </div>
+    </article>
+
+    <footer class="essay-footer">
+      <a href="/" class="essay-backlink">← Essays</a>
+    </footer>
+  </main>
+</BaseLayout>

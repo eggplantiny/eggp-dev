@@ -1,0 +1,256 @@
+---
+import VercelAnalytics from '@vercel/analytics/astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  lang?: string;
+  publishedTime?: Date;
+  tags?: string[];
+  alternates?: Array<{
+    lang: string;
+    href: string;
+    default?: boolean;
+  }>;
+}
+
+const {
+  title = 'Essays',
+  description = 'A personal archive of essays on technology, work, and thought.',
+  ogImage = '/og-default.png',
+  ogType = 'website',
+  noindex = false,
+  lang = 'en',
+  publishedTime,
+  tags = [],
+  alternates = [],
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL('https://eggp.dev');
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const siteName = 'Essays';
+const authorName = 'eggplantiny';
+const githubUrl = 'https://github.com/eggplantiny';
+const xUrl = 'https://x.com/eggpplantiny';
+const xHandle = '@eggpplantiny';
+const linkedInUrl = 'https://linkedin.com/in/eggp-io/';
+const resolvedTitle = title === siteName ? siteName : `${title} | ${siteName}`;
+const resolvedOgImage = ogImage ? new URL(ogImage, siteUrl).toString() : undefined;
+const locale = lang === 'ko' ? 'ko_KR' : 'en_US';
+const alternateLocales = alternates
+  .filter((alternate) => alternate.lang !== lang)
+  .map((alternate) => (alternate.lang === 'ko' ? 'ko_KR' : 'en_US'));
+const resolvedAlternates = alternates.flatMap((alternate) => {
+  const href = new URL(alternate.href, siteUrl).toString();
+  const links = [{ hreflang: alternate.lang, href }];
+  if (alternate.default) {
+    links.push({ hreflang: 'x-default', href });
+  }
+  return links;
+});
+const personSchema = {
+  '@type': 'Person',
+  name: authorName,
+  url: 'https://eggp.dev',
+  sameAs: [githubUrl, xUrl, linkedInUrl],
+};
+const structuredData =
+  ogType === 'article'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: title,
+        description,
+        url: canonicalUrl,
+        inLanguage: lang,
+        datePublished: publishedTime?.toISOString(),
+        image: resolvedOgImage ? [resolvedOgImage] : undefined,
+        author: personSchema,
+        publisher: personSchema,
+        keywords: tags.length > 0 ? tags : undefined,
+      }
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: siteName,
+        description,
+        url: 'https://eggp.dev',
+        inLanguage: lang,
+        author: personSchema,
+      };
+---
+
+<!doctype html>
+<html lang={lang} data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+
+        try {
+          const storedTheme = localStorage.getItem('theme');
+          if (storedTheme === 'light' || storedTheme === 'dark') {
+            root.dataset.theme = storedTheme;
+            return;
+          }
+        } catch {
+          // Ignore access errors and fall back to system preference.
+        }
+
+        root.dataset.theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
+      })();
+    </script>
+    <title>{resolvedTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={authorName} />
+    <link rel="canonical" href={canonicalUrl} />
+    {resolvedAlternates.map((alternate) => (
+      <link rel="alternate" hreflang={alternate.hreflang} href={alternate.href} />
+    ))}
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={locale} />
+    {alternateLocales.map((alternateLocale) => (
+      <meta property="og:locale:alternate" content={alternateLocale} />
+    ))}
+    {resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:site" content={xHandle} />
+    <meta name="twitter:creator" content={xHandle} />
+    {resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
+    {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+    {tags.map((tag) => (
+      <meta property="article:tag" content={tag} />
+    ))}
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#faf9f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
+    <link rel="apple-touch-icon" href="/icon.png" sizes="512x512" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.min.css"
+    />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3H720QHEJS"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-3H720QHEJS');
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="page-shell site-header__inner">
+        <a href="/" class="site-title">Essays</a>
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">
+          <span data-theme-label="dark">● Dark</span>
+          <span data-theme-label="light">☀ Light</span>
+        </button>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class="site-footer">
+      <div class="page-shell site-footer__inner">
+        <nav class="social-links" aria-label="Social links">
+          <a
+            href="https://github.com/eggplantiny"
+            class="social-link"
+            target="_blank"
+            rel="me noopener noreferrer"
+            aria-label="GitHub"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M12 2C6.477 2 2 6.596 2 12.266c0 4.537 2.865 8.386 6.839 9.745.5.096.682-.223.682-.495 0-.245-.009-.894-.014-1.755-2.782.62-3.37-1.39-3.37-1.39-.455-1.177-1.11-1.49-1.11-1.49-.908-.636.069-.623.069-.623 1.004.072 1.532 1.055 1.532 1.055.892 1.56 2.341 1.11 2.91.848.091-.664.35-1.11.636-1.365-2.221-.26-4.556-1.136-4.556-5.055 0-1.117.389-2.032 1.029-2.748-.103-.26-.446-1.31.098-2.731 0 0 .84-.276 2.75 1.05A9.31 9.31 0 0 1 12 6.836c.85.004 1.706.118 2.505.347 1.909-1.326 2.748-1.05 2.748-1.05.546 1.42.203 2.47.1 2.731.64.716 1.027 1.63 1.027 2.748 0 3.928-2.339 4.792-4.566 5.047.359.318.679.944.679 1.903 0 1.374-.012 2.481-.012 2.819 0 .274.18.596.688.494C19.138 20.648 22 16.801 22 12.266 22 6.596 17.523 2 12 2Z"
+              />
+            </svg>
+            <span class="sr-only">GitHub</span>
+          </a>
+          <a
+            href="https://x.com/eggpplantiny"
+            class="social-link"
+            target="_blank"
+            rel="me noopener noreferrer"
+            aria-label="X"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M18.901 2H21.98l-6.724 7.684L23.167 22h-6.191l-4.848-7.508L5.557 22H2.476l7.193-8.22L.833 2h6.349l4.382 6.93L18.901 2Zm-1.083 18.063h1.706L6.25 3.84H4.42l13.398 16.223Z"
+              />
+            </svg>
+            <span class="sr-only">X</span>
+          </a>
+          <a
+            href="https://linkedin.com/in/eggp-io/"
+            class="social-link"
+            target="_blank"
+            rel="me noopener noreferrer"
+            aria-label="LinkedIn"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M6.94 8.5H3.56V21h3.38V8.5ZM5.25 3C4.17 3 3.3 3.88 3.3 4.97c0 1.08.87 1.97 1.95 1.97 1.08 0 1.95-.89 1.95-1.97C7.2 3.88 6.33 3 5.25 3ZM20.7 13.24c0-3.16-1.69-4.74-3.95-4.74-1.82 0-2.64 1.01-3.1 1.72V8.5h-3.38c.04 1.14 0 12.5 0 12.5h3.38v-6.98c0-.37.03-.74.14-1 .3-.73.99-1.48 2.14-1.48 1.51 0 2.11 1.11 2.11 2.74V21H20.7v-7.76Z"
+              />
+            </svg>
+            <span class="sr-only">LinkedIn</span>
+          </a>
+        </nav>
+      </div>
+    </footer>
+    <slot name="analytics" />
+
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const toggle = document.querySelector('[data-theme-toggle]');
+
+        if (!(toggle instanceof HTMLButtonElement)) {
+          return;
+        }
+
+        toggle.addEventListener('click', () => {
+          const nextTheme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+          root.dataset.theme = nextTheme;
+
+          try {
+            localStorage.setItem('theme', nextTheme);
+          } catch {
+            // Ignore persistence errors.
+          }
+        });
+      })();
+    </script>
+    <VercelAnalytics />
+  </body>
+</html>
