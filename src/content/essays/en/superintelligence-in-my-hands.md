@@ -1,6 +1,6 @@
 ---
 title: "Superintelligence in My Hands"
-subtitle: "What remains — and what vanishes — when AI compresses expertise"
+subtitle: "What remains irreducibly human when AI compresses expertise"
 date: 2026-04-15
 description: "A candid essay on how AI compressed years of learning into months, and what still remains irreducibly human."
 seoTitle: "Superintelligence in My Hands: AI, Expertise, and Human Judgment"
@@ -15,7 +15,7 @@ draft: false
 
 # Superintelligence in My Hands
 
-## What remains — and what vanishes — when AI compresses expertise
+## What remains irreducibly human when AI compresses expertise
 
 ---
 
