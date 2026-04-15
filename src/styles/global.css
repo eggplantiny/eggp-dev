@@ -32,7 +32,7 @@
   --bg-sub: #222;
   --text: #e8e4df;
   --text-muted: #9a9590;
-  --text-faint: #6b6560;
+  --text-faint: #8a847d;
   --accent: #d4a574;
   --accent-hover: #e0b88a;
   --border: #333;
@@ -512,6 +512,7 @@ button {
   border-radius: 8px;
   padding: 20px 24px;
   background: var(--code-bg) !important;
+  color: inherit;
 }
 
 .essay-prose :where(pre.astro-code code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -520,6 +521,19 @@ button {
   font-family: var(--font-mono);
   font-size: 14px;
   line-height: 1.65;
+}
+
+.essay-prose :where(pre.astro-code span):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background-color: transparent !important;
+}
+
+[data-theme="dark"] .essay-prose :where(pre.astro-code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background-color: var(--shiki-dark-bg, var(--code-bg)) !important;
+  color: var(--shiki-dark, var(--text)) !important;
+}
+
+[data-theme="dark"] .essay-prose :where(pre.astro-code span):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: var(--shiki-dark, inherit) !important;
 }
 
 .essay-prose :where(code):not(:where(pre code, [class~="not-prose"], [class~="not-prose"] *)) {

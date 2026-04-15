@@ -67,7 +67,7 @@ Agent state, confidence signals, guarded actions, and hypothetical transitions a
 
 Words only go so far, so here's actual MEL code. The simplest example — a scoreboard domain:
 
-```
+```mel
 domain Score {
   state {
     home: number = 0

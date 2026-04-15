@@ -67,7 +67,7 @@ draft: false
 
 말로만 설명하면 와닿지 않을 수 있으니, 실제 MEL 코드를 보여주겠다. 가장 단순한 예시로, 스코어보드 도메인이다:
 
-```
+```mel
 domain Score {
   state {
     home: number = 0
