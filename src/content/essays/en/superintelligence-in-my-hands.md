@@ -13,11 +13,11 @@ draft: false
 
 ---
 
-I'm a frontend developer. Six years of React and TypeScript, currently building a robotics platform at KT, a Korean telecom company. No background in compiler theory. No PhD.
+I'm a frontend developer. Six years of React and TypeScript. No background in compiler theory. No PhD.
 
 Four months ago, I was designing a DSL (domain-specific language) compiler for a state description language built for AI agents. Formal semantics, type system soundness, intermediate representation design — none of it was my field. In April 2026, I put an experiment built on this framework [on arXiv](https://arxiv.org/abs/2604.07236).
 
-This isn't a brag. It's a confession.
+This isn't a brag. It's just what happened.
 
 I did all of this with AI. It would have been impossible without it. And that fact is both exhilarating and frightening. It feels like I've caught up to roughly 80% of what would normally take years of dedicated study and experience — in four months. That "80%" is the number that keeps me up at night.
 
@@ -27,7 +27,7 @@ I did all of this with AI. It would have been impossible without it. And that fa
 
 The story starts long before AI.
 
-Over the past several years, I've built a variety of SaaS products. Robotics fleet management, map generation tools, products across different domains. With each new business logic I implemented, a strange feeling accumulated: different domains kept exhibiting the same structures.
+Over the past several years, I've built a variety of SaaS products. IoT fleet management, map-based tools, products across different domains. With each new business logic I implemented, a strange feeling accumulated: different domains kept exhibiting the same structures.
 
 E-commerce's "cart → checkout → shipping" and robotics' "mission assignment → execution → report." The surface couldn't be more different, but the way states transitioned, conditions branched, and exceptions were handled — these were strikingly similar. It wasn't just design patterns repeating. Deeper down, the domains themselves seemed to share a semantic skeleton.
 
@@ -43,7 +43,7 @@ Years of accumulated intuition crystallized on asphalt into one sentence:
 
 > **Every domain is a coordinate in a single semantic space.**
 
-E-commerce, robotics, healthcare — each domain looks like its own world, but they're really just occupying different coordinates in a larger semantic space. The axes of that space are universal primitives: state, transition, and constraint.
+Logistics, fintech, healthcare — each domain looks like its own world, but they're really just occupying different coordinates in a larger semantic space. The axes of that space are universal primitives: state, transition, and constraint.
 
 This was the starting point of [Manifesto](https://github.com/manifesto-ai/core). Not a technical innovation, but an axiom. And once you accept this axiom, certain things follow naturally. You need a language that can formally describe domain structures. For AI to reason over that language, it must be deterministic. For humans and AI to share the same world model, it must be a semantic interface readable by both.
 
@@ -52,8 +52,6 @@ I had the axiom. What I didn't have was the ability to turn it into a real syste
 ---
 
 ### Reaching where I couldn't reach
-
-This is where the real story begins.
 
 To turn the axiom into a system, I needed to step into at least three expert domains: formal language theory, compiler design, and academic research methodology. All completely unrelated to my career. Under normal circumstances, each would require years of study.
 
@@ -65,7 +63,7 @@ Agent state, confidence signals, guarded actions, and hypothetical transitions a
 
 Words only go so far, so here's actual MEL code. The simplest example — a scoreboard domain:
 
-```mel
+```
 domain Score {
   state {
     home: number = 0
@@ -91,6 +89,8 @@ domain Score {
 Because this graph is acyclic, the outcome of any action is fully predictable before execution. An AI agent can read this graph and know — by computation, not inference — that calling `homeScore()` will increment `total` and set `isDraw` to `false`.
 
 Would a compiler expert find holes in this? Probably. Would a formal language researcher have designed it differently? Almost certainly. But it works. It passed stress testing, and I was able to run real experiments on it.
+
+Getting here wasn't smooth, though. Four times, I discovered contradictions between internal features in a nearly-finished v1 architecture and rewrote the entire thing from zero. Normally, that would be a catastrophic schedule hit. But with Codex and Claude Code, a full reimplementation took less than two days. So it wasn't scary — when the judgment "this design is wrong" hit, I could throw it away and rebuild. AI didn't just change my capabilities. It changed **the cost of failure**.
 
 Four months ago, I was a frontend developer. Now I'm still a frontend developer — but also someone who designed a DSL compiler, defined a formal language, and put a paper on arXiv.
 
@@ -120,7 +120,7 @@ So what's the remaining 20%?
 
 Early in the framework design, I asked AI to decide MEL's core abstraction level. "How granular should state transitions be?" It proposed a three-tier architecture that looked logically flawless. I implemented it.
 
-Two weeks later, modeling a real domain, I realized the structure was fundamentally wrong. In a robotics mission, a scenario like "robot receives an urgent dispatch while charging" cut across two of the proposed tiers simultaneously. The tier boundaries were clean in theory, but real domains don't respect theoretical boundaries. I had to scrap the hierarchy and redesign around a flat state-transition graph. AI gave the optimal answer within the constraints I set — but the constraints themselves were wrong. **A perfect answer to a wrong question.**
+Two weeks later, modeling a real domain, I realized the structure was fundamentally wrong. In an IoT fleet management scenario, a case like "a sensor receives an anomaly alert while mid-firmware-update" cut across two of the proposed tiers simultaneously. The tier boundaries were clean in theory, but real domains don't respect theoretical boundaries. I had to scrap the hierarchy and redesign around a flat state-transition graph. AI gave the optimal answer within the constraints I set — but the constraints themselves were wrong. **A perfect answer to a wrong question.**
 
 This is what the remaining 20% is. Which abstraction is right, which problem is the real problem, which trade-offs to accept — these judgments can't be delegated to AI. AI only moves within the scope of the question you throw at it. Correcting the question itself — the gut feeling that "I'm asking the wrong thing right now" — is still a human job.
 
@@ -130,7 +130,7 @@ That felt 80% is remarkable, but it's also dangerous. It creates the illusion of
 
 To be honest, I don't know whether I've filled that remaining 20%. I probably haven't. I'm confident in the 80% that AI helped me reach, but I can't judge where my own blind spots are — that's what makes them blind spots.
 
-That's why I decided to write a paper. Sitting alone asking myself "is this right?" wasn't getting me anywhere. Whether what I built is a meaningful contribution or a well-packaged illusion — that judgment has to come from people who actually possess the 20%. Putting it on arXiv and submitting to conferences was a choice not to dodge that evaluation.
+That's why I decided to write a paper. Sitting alone asking myself "is this right?" wasn't getting me anywhere. Whether what I built is a meaningful contribution or a well-packaged illusion — that judgment has to come from people who actually possess the 20%. Putting it on arXiv was a choice not to dodge that evaluation.
 
 ---
 
