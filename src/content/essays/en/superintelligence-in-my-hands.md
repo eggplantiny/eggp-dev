@@ -11,17 +11,17 @@ ogImageAlt: "Superintelligence in My Hands essay cover image"
 draft: false
 ---
 
+> *This essay was originally written in Korean and translated into English with the help of AI.*
+
 # Superintelligence in My Hands
 
 ## What remains — and what vanishes — when AI compresses expertise
 
 ---
 
-I'm a frontend developer. Six years of React and TypeScript. No background in compiler theory. No PhD.
+I'm a frontend developer in my eighth year. I've written countless lines of Vue, React, and TypeScript. No background in compiler theory. No master's degree, let alone a PhD.
 
-Four months ago, I was designing a DSL (domain-specific language) compiler for a state description language built for AI agents. Formal semantics, type system soundness, intermediate representation design — none of it was my field. In April 2026, I put an experiment built on this framework [on arXiv](https://arxiv.org/abs/2604.07236).
-
-This isn't a brag. It's just what happened.
+Starting four months ago, I was designing a DSL (domain-specific language) compiler for a state description language built for AI agents. Formal semantics, type system soundness, intermediate representation design — none of it was my field. In April 2026, I put an experiment built on this framework [on arXiv](https://arxiv.org/abs/2604.07236).
 
 I did all of this with AI. It would have been impossible without it. And that fact is both exhilarating and frightening. It feels like I've caught up to roughly 80% of what would normally take years of dedicated study and experience — in four months. That "80%" is the number that keeps me up at night.
 
@@ -35,31 +35,35 @@ Over the past several years, I've built a variety of SaaS products. IoT fleet ma
 
 E-commerce's "cart → checkout → shipping" and robotics' "mission assignment → execution → report." The surface couldn't be more different, but the way states transitioned, conditions branched, and exceptions were handled — these were strikingly similar. It wasn't just design patterns repeating. Deeper down, the domains themselves seemed to share a semantic skeleton.
 
-I had no name for this feeling. So I shelved it. Then one day, on a run, it collapsed into a single sentence.
+I had no name for this intuition. So I shelved it. Then one day, on a run, it collapsed into a single sentence.
 
 ---
 
 ### One axiom
 
-I run 10km a day. About 140km a month, going on four years now. My thinking during runs isn't linear — it jumps from concept to concept like hyperlinks. That kind of nonlinear thinking is useful for detecting gaps in existing solutions.
+I run 5km a day. About 140km a month, going on four years now. My thinking during runs isn't linear — it jumps from concept to concept like hyperlinks. That kind of nonlinear thinking is useful for detecting gaps in existing solutions.
 
-Years of accumulated intuition crystallized on asphalt into one sentence:
+Years of accumulated intuition crystallized on the track into one sentence:
 
 > **Every domain is a coordinate in a single semantic space.**
 
 Logistics, fintech, healthcare — each domain looks like its own world, but they're really just occupying different coordinates in a larger semantic space. The axes of that space are universal primitives: state, transition, and constraint.
 
-This was the starting point of [Manifesto](https://github.com/manifesto-ai/core). Not a technical innovation, but an axiom. And once you accept this axiom, certain things follow naturally. You need a language that can formally describe domain structures. For AI to reason over that language, it must be deterministic. For humans and AI to share the same world model, it must be a semantic interface readable by both.
+This short sentence was the starting point of [Manifesto](https://github.com/manifesto-ai/core). Once you accept this thesis, certain things follow naturally. You need a language that can formally describe domain structures. For AI to reason over that language, it must be deterministic. For humans and AI to share the same world model, it must be a semantic interface readable by both.
 
-I had the axiom. What I didn't have was the ability to turn it into a real system.
+I had the thesis. What I didn't have was the ability to turn it into a real system.
 
 ---
 
 ### Reaching where I couldn't reach
 
-To turn the axiom into a system, I needed to step into at least three expert domains: formal language theory, compiler design, and academic research methodology. All completely unrelated to my career. Under normal circumstances, each would require years of study.
+Until four months ago, I was a frontend developer. Now I'm still a frontend developer — but also someone who designed a DSL compiler, defined a formal language, and put a paper on arXiv.
 
-I used AI. Not as a coding assistant, but as **a way to borrow expert thinking patterns from each field**.
+How was this possible? Let me be honest.
+
+To turn the thesis into a system, I needed to step into at least three expert domains: formal language theory, compiler design, and hands-on experience building large-scale frameworks. All completely unrelated to my career. Under normal circumstances, each would require years of study.
+
+So I used AI. Not as a coding assistant, but as **a way to borrow expert thinking patterns from each field**.
 
 The result was MEL (Manifesto Expression Language) — a state description language and its runtime, [Manifesto Core](https://github.com/manifesto-ai/core). It models domain state transitions as a directed acyclic graph (DAG) and is intentionally not Turing-complete. By restricting expressiveness, the system gains the ability to fully enumerate the state space and detect deadlocks before execution. It gives AI agents a world where "what happens if I take this action?" always has a deterministic answer.
 
@@ -96,10 +100,6 @@ Would a compiler expert find holes in this? Probably. Would a formal language re
 
 Getting here wasn't smooth, though. Four times, I discovered contradictions between internal features in a nearly-finished v1 architecture and rewrote the entire thing from zero. Normally, that would be a catastrophic schedule hit. But with Codex and Claude Code, a full reimplementation took less than two days. So it wasn't scary — when the judgment "this design is wrong" hit, I could throw it away and rebuild. AI didn't just change my capabilities. It changed **the cost of failure**.
 
-Four months ago, I was a frontend developer. Now I'm still a frontend developer — but also someone who designed a DSL compiler, defined a formal language, and put a paper on arXiv.
-
-How was this possible? Let me be honest.
-
 ---
 
 ### How AI gets you to "80%"
@@ -107,6 +107,8 @@ How was this possible? Let me be honest.
 I used multiple AIs in different roles. Some were relentless at finding contradictions in specs. Some were better at long-horizon architectural judgment. Some were better at widening the possibility space before an idea had fully taken shape.
 
 The important part wasn't the model names. It was that I could run something like a daily feedback loop with several expert perspectives at once. Not perfectly, but well enough to tell whether a direction was sound or broken.
+
+And this fast feedback loop structurally lowered the cost of failure. Even if I walked two days in the wrong direction, half a day was enough to walk back. So there was no reason to fear the attempt itself. Redesigning the type system from scratch, venturing into unfamiliar formal semantics — all of it was possible on the foundation of "if it's wrong, just come back." When failure is cheap, the range of exploration widens. When the range of exploration widens, even a non-expert can walk close to expert territory.
 
 That's what I mean by "80%." AI doesn't replace the judgment of someone who has spent years in a field. But it can lift a non-expert far enough to produce meaningful work inside expert territory.
 
@@ -144,23 +146,23 @@ The related work survey is a good example. Mapping literature is one of the slow
 
 The same went for the nuances of academic English. The subtle difference between "We propose" and "We introduce." How to report results without overclaiming while still conveying significance. How to honestly acknowledge limitations without undermining contributions. AI corrected all of this in real time.
 
-The paper I put on arXiv is titled *"How Much LLM Does a Self-Revising Agent Actually Need?"* What I wanted to ask wasn't just whether the system worked. It was whether, once reasoning is externalized into an inspectable runtime, we can separately measure the moments where an LLM is actually needed and the moments where rule-based reasoning does better. I ran a staged decomposition of agent capabilities on top of the declarative runtime.
+The paper I put on arXiv is titled [*"How Much LLM Does a Self-Revising Agent Actually Need?"*](https://arxiv.org/abs/2604.07236) What I wanted to ask wasn't just whether the system worked. It was whether, once reasoning is externalized into an inspectable runtime, we can separately measure the moments where an LLM is actually needed and the moments where rule-based reasoning does better. I ran a staged decomposition of agent capabilities on top of the declarative runtime.
 
 The initial results were interesting. Across 54 games (18 boards × 3 seeds) on a noisy Collaborative Battleship benchmark, adding explicit world-model planning alone raised win rate by 24.1 percentage points. LLM-based revision appeared on only about 4.3% of turns and actually reduced win rate. The point wasn't leaderboard performance. It was showing that once reflection is externalized into a declarative runtime, you can empirically decompose where LLMs help and where they don't.
 
 I don't know if this paper will be accepted. But at least I got to ask the question I wanted to ask. That alone puts me somewhere I couldn't have imagined four months ago.
 
-The day I [put the preprint on arXiv](https://arxiv.org/abs/2604.07236), elation and anxiety hit simultaneously. arXiv isn't a gatekeeping checkpoint — it's a starting line. Whether my paper is a meaningful contribution, or whether blind spots I can't see are fatal — that's for the people who have the 20% to decide. I won't dodge that judgment. The whole point of writing the paper was to invite it.
+The day I put the preprint on arXiv, elation and anxiety hit simultaneously. arXiv isn't a gatekeeping checkpoint — it's a starting line. Whether my paper is a meaningful contribution, or whether blind spots I can't see are fatal — that's for the people who have the 20% to decide. I won't dodge that judgment. The whole point of writing the paper was to invite it.
 
 ---
 
 ### Where is the superintelligence?
 
-The title of this essay is deliberately provocative. "Superintelligence" doesn't exist yet.
+The title of this essay is deliberately provocative. To be honest, I'm not even sure "superintelligence" exists yet.
 
 But the tool in my hands opened doors to fields I thought I'd never reach. Not just one field — several at once. Before, there was a boundary: "I'm a frontend developer." AI didn't tear down that boundary. It gave me just enough gear to explore what's on the other side.
 
-It's awe-inspiring. And honestly, it's frightening.
+These experiences are awe-inspiring. And honestly, frightening.
 
 The awe is obvious. The range of intellectual territory a single person can access has expanded in an unprecedented way. The fear is equally obvious. When the feeling of "almost there" comes too easily, it's easy to forget how much the remaining gap matters. And when things built without real understanding of that gap go out into the world, we risk a future where convincing illusions replace real expertise.
 
