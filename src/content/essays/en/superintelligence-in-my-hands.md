@@ -3,7 +3,11 @@ title: "Superintelligence in My Hands"
 subtitle: "What remains — and what vanishes — when AI compresses expertise"
 date: 2026-04-15
 description: "A candid essay on how AI compressed years of learning into months, and what still remains irreducibly human."
-tags: ["AI", "essay", "development", "research"]
+seoTitle: "Superintelligence in My Hands: AI, Expertise, and Human Judgment"
+seoDescription: "A frontend developer reflects on using AI to build a DSL compiler, write a paper, and confront the human judgment AI still cannot compress."
+tags: ["AI", "expertise", "LLM", "software engineering", "research"]
+keywords: ["AI essay", "human judgment", "expertise", "DSL compiler", "LLM", "research"]
+ogImageAlt: "Superintelligence in My Hands essay cover image"
 draft: false
 ---
 
@@ -37,7 +41,7 @@ I had no name for this feeling. So I shelved it. Then one day, on a run, it coll
 
 ### One axiom
 
-I run 10km a day. About 140km a month, going on four years now. My thinking during runs isn't linear — it jumps from concept to concept like hyperlinks. This ADHD-style cognition is surprisingly useful for detecting blind spots in existing solutions.
+I run 10km a day. About 140km a month, going on four years now. My thinking during runs isn't linear — it jumps from concept to concept like hyperlinks. That kind of nonlinear thinking is useful for detecting gaps in existing solutions.
 
 Years of accumulated intuition crystallized on asphalt into one sentence:
 
@@ -59,7 +63,7 @@ I used AI. Not as a coding assistant, but as **a way to borrow expert thinking p
 
 The result was MEL (Manifesto Expression Language) — a state description language and its runtime, [Manifesto Core](https://github.com/manifesto-ai/core). It models domain state transitions as a directed acyclic graph (DAG) and is intentionally not Turing-complete. By restricting expressiveness, the system gains the ability to fully enumerate the state space and detect deadlocks before execution. It gives AI agents a world where "what happens if I take this action?" always has a deterministic answer.
 
-Agent state, confidence signals, guarded actions, and hypothetical transitions are all externalized as runtime structures, keeping the agent's internal state permanently inspectable. Not a black box — a box you can open.
+Agent state, confidence signals, guarded actions, and hypothetical transitions are externalized as runtime structures, so the agent's internal state remains inspectable. Not a black box — a box you can open.
 
 Words only go so far, so here's actual MEL code. The simplest example — a scoreboard domain:
 
@@ -100,17 +104,11 @@ How was this possible? Let me be honest.
 
 ### How AI gets you to "80%"
 
-I ran multiple AIs simultaneously, each in a different role.
+I used multiple AIs in different roles. Some were relentless at finding contradictions in specs. Some were better at long-horizon architectural judgment. Some were better at widening the possibility space before an idea had fully taken shape.
 
-**GPT** was the harshest reviewer. When I handed over the MEL compiler spec, it gave me "No Go" over 15 times. Contradictions between internal clauses, inconsistencies in type lowering policy — the quality of feedback was no different from what you'd get from a human reviewer.
+The important part wasn't the model names. It was that I could run something like a daily feedback loop with several expert perspectives at once. Not perfectly, but well enough to tell whether a direction was sound or broken.
 
-**Claude** was the architecture sparring partner. When I needed long-term design judgment, this was the one I leaned on most. Strong at maintaining context across design documents and delivering structural analysis.
-
-**Gemini** was the explorer. Useful for mapping the possibility space of ideas that hadn't taken shape yet.
-
-Here's the essence of this workflow: each AI reproduces a significant portion of expert-level thinking patterns in its respective field. Not perfectly, but enough to rapidly validate whether a direction is right or wrong. As someone who'd never built a DSL compiler, I was able to run a daily feedback loop that resembled having a language design expert on call.
-
-This is the substance behind "80%." AI doesn't fully replace the judgment of someone who has spent years in a field. But it elevates a non-expert enough to produce meaningful work within expert domains.
+That's what I mean by "80%." AI doesn't replace the judgment of someone who has spent years in a field. But it can lift a non-expert far enough to produce meaningful work inside expert territory.
 
 So what's the remaining 20%?
 
@@ -126,9 +124,9 @@ This is what the remaining 20% is. Which abstraction is right, which problem is 
 
 And this 20% is exactly what we mean when we call someone an "expert." The instinct forged through thousands of failures, the ability to survey an entire field, the judgment that can't be explained beyond "this doesn't feel right." That's built through a lifetime of learning. What AI compressed for me was the skill of formalization and implementation — not that kind of intuition.
 
-That felt 80% is remarkable, but it's also dangerous. It creates the illusion of "almost there." But without the rest — in a state where you don't know what you don't know — you can build things that look formally perfect but are fundamentally meaningless.
+That felt 80% is remarkable, but it's also dangerous. It creates the illusion of "almost there." But without the rest — in a state where you don't know what you don't know — you can build things that look formally perfect but are fundamentally hollow.
 
-To be honest, I don't know whether I've filled that remaining 20%. I probably haven't. I'm confident in the 80% that AI helped me reach, but I can't judge where my own blind spots are — that's what makes them blind spots.
+To be honest, I don't know whether I've filled that remaining gap. I probably haven't. I'm confident in the ground AI helped me reach, but I can't judge where my own blind spots are — that's what makes them blind spots.
 
 That's why I decided to write a paper. Sitting alone asking myself "is this right?" wasn't getting me anywhere. Whether what I built is a meaningful contribution or a well-packaged illusion — that judgment has to come from people who actually possess the 20%. Putting it on arXiv was a choice not to dodge that evaluation.
 
@@ -142,13 +140,13 @@ The world of research has an unspoken grammar. How to frame motivation, what an 
 
 And yet, AI compressed this process too.
 
-The related work survey is a prime example. In academic research, mapping the relevant literature is one of the most time-consuming tasks. You need to understand the lineage of a field and locate where your work fits. I described my project to an AI and said, "find similar research." That was it. It surfaced key papers across declarative runtimes, agent architectures, and world-model-based planning, and analyzed how my work differed from each. Work that takes a graduate student months was done in a day.
+The related work survey is a good example. Mapping literature is one of the slowest parts of academic research. I described the project to AI and asked for adjacent work. It quickly surfaced papers across declarative runtimes, agent architectures, and world-model planning, and helped me see where my work sat in that lineage. A search that could have taken months compressed into a day.
 
 The same went for the nuances of academic English. The subtle difference between "We propose" and "We introduce." How to report results without overclaiming while still conveying significance. How to honestly acknowledge limitations without undermining contributions. AI corrected all of this in real time.
 
-The paper I put on arXiv is titled *"How Much LLM Does a Self-Revising Agent Actually Need?"* The question started here: since Manifesto Core turns the agent's reasoning process into a box you can open, could we now open that box and separately measure the moments where an LLM is actually needed versus where rule-based reasoning does better? I progressively decomposed agent capabilities into four stages on the declarative runtime. 54 games (18 boards × 3 seeds) on a noisy Collaborative Battleship benchmark. The results were interesting.
+The paper I put on arXiv is titled *"How Much LLM Does a Self-Revising Agent Actually Need?"* What I wanted to ask wasn't just whether the system worked. It was whether, once reasoning is externalized into an inspectable runtime, we can separately measure the moments where an LLM is actually needed and the moments where rule-based reasoning does better. I ran a staged decomposition of agent capabilities on top of the declarative runtime.
 
-Adding explicit world-model planning alone raised win rate by 24.1 percentage points. Meanwhile, LLM-based revision was invoked on only about 4.3% of turns — and actually lowered win rate. The contribution isn't leaderboard performance. It's showing that once you externalize reflection into a declarative runtime, you can empirically decompose and measure where LLMs actually contribute and where they don't.
+The initial results were interesting. Across 54 games (18 boards × 3 seeds) on a noisy Collaborative Battleship benchmark, adding explicit world-model planning alone raised win rate by 24.1 percentage points. LLM-based revision appeared on only about 4.3% of turns and actually reduced win rate. The point wasn't leaderboard performance. It was showing that once reflection is externalized into a declarative runtime, you can empirically decompose where LLMs help and where they don't.
 
 I don't know if this paper will be accepted. But at least I got to ask the question I wanted to ask. That alone puts me somewhere I couldn't have imagined four months ago.
 

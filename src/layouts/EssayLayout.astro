@@ -4,12 +4,16 @@ import BaseLayout from './BaseLayout.astro';
 interface Props {
   title: string;
   description: string;
+  seoTitle?: string;
+  seoDescription?: string;
   date: Date;
   subtitle?: string;
   ogImage?: string;
+  ogImageAlt?: string;
   draft?: boolean;
   lang?: string;
   tags?: string[];
+  keywords?: string[];
   alternateVersions?: Array<{
     lang: string;
     href: string;
@@ -20,12 +24,16 @@ interface Props {
 const {
   title,
   description,
+  seoTitle,
+  seoDescription,
   date,
   subtitle,
   ogImage,
+  ogImageAlt,
   draft = false,
   lang = 'en',
   tags = [],
+  keywords = [],
   alternateVersions = [],
 } = Astro.props;
 
@@ -40,12 +48,16 @@ const formattedDate = new Intl.DateTimeFormat(dateLocale, {
 <BaseLayout
   title={title}
   description={description}
+  metaTitle={seoTitle}
+  metaDescription={seoDescription}
   ogImage={ogImage}
+  ogImageAlt={ogImageAlt}
   ogType="article"
   noindex={draft}
   lang={lang}
   publishedTime={date}
   tags={tags}
+  keywords={keywords}
   alternates={alternateVersions.map((version) => ({
     lang: version.lang.toLowerCase(),
     href: version.href,
@@ -53,7 +65,7 @@ const formattedDate = new Intl.DateTimeFormat(dateLocale, {
   }))}
 >
   <main class="page-shell essay-page">
-    <a href="/" class="essay-backlink">← Essays</a>
+    <a href="/" class="essay-backlink">← eggp.</a>
 
     <article class="essay-article">
       <header class="essay-header">
@@ -83,7 +95,7 @@ const formattedDate = new Intl.DateTimeFormat(dateLocale, {
     </article>
 
     <footer class="essay-footer">
-      <a href="/" class="essay-backlink">← Essays</a>
+      <a href="/" class="essay-backlink">← eggp.</a>
     </footer>
   </main>
 </BaseLayout>
