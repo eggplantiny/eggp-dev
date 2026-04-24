@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import SubscribeForm from '../components/SubscribeForm.astro';
 
 interface Props {
   title: string;
@@ -93,6 +94,10 @@ const formattedDate = new Intl.DateTimeFormat(dateLocale, {
         <slot />
       </div>
     </article>
+
+    <aside class="essay-subscribe" aria-label={lang === 'ko' ? '뉴스레터 구독' : 'Newsletter subscription'}>
+      <SubscribeForm lang={lang} />
+    </aside>
 
     <footer class="essay-footer">
       <a href="/" class="essay-backlink">← eggp.</a>
