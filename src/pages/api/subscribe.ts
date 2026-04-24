@@ -2,7 +2,6 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
-const BUTTONDOWN_ENDPOINT = 'https://api.buttondown.com/v1/subscribers';
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const json = (body: Record<string, unknown>, status: number) =>
@@ -12,8 +11,9 @@ const json = (body: Record<string, unknown>, status: number) =>
   });
 
 export const POST: APIRoute = async ({ request }) => {
-  const apiKey = import.meta.env.BUTTONDOWN_API_KEY;
-  if (!apiKey) {
+  const apiKey = import.meta.env.RESEND_API_KEY;
+  const audienceId = import.meta.env.RESEND_AUDIENCE_ID;
+  if (!apiKey || !audienceId) {
     return json({ error: 'Newsletter is not configured.' }, 500);
   }
 
@@ -35,29 +35,32 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'Please enter a valid email address.' }, 400);
   }
 
-  const response = await fetch(BUTTONDOWN_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      Authorization: `Token ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email_address: email.trim() }),
-  });
+  const response = await fetch(
+    `https://api.resend.com/audiences/${audienceId}/contacts`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email.trim(), unsubscribed: false }),
+    }
+  );
+
+  let data: { id?: string; name?: string; message?: string } = {};
+  try {
+    data = await response.json();
+  } catch {
+    // ignore body parse errors
+  }
 
   if (response.ok) {
     return json({ ok: true }, 200);
   }
 
-  // Buttondown returns 400 with { code: 'email_already_exists' } when re-subscribing.
-  let code: string | undefined;
-  try {
-    const data = (await response.json()) as { code?: string; detail?: string };
-    code = data.code;
-  } catch {
-    // ignore body parse errors
-  }
-
-  if (code === 'email_already_exists') {
+  // Resend signals duplicates via validation_error with a message mentioning existence.
+  const message = data.message?.toLowerCase() ?? '';
+  if (data.name === 'validation_error' && message.includes('already')) {
     return json({ ok: true, alreadySubscribed: true }, 200);
   }
 
