@@ -1,8 +1,8 @@
 import type { APIRoute } from 'astro';
+import { Resend } from 'resend';
 
 export const prerender = false;
 
-const BUTTONDOWN_ENDPOINT = 'https://api.buttondown.com/v1/subscribers';
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const json = (body: Record<string, unknown>, status: number) =>
@@ -12,8 +12,9 @@ const json = (body: Record<string, unknown>, status: number) =>
   });
 
 export const POST: APIRoute = async ({ request }) => {
-  const apiKey = import.meta.env.BUTTONDOWN_API_KEY;
-  if (!apiKey) {
+  const apiKey = import.meta.env.RESEND_API_KEY;
+  const audienceId = import.meta.env.RESEND_AUDIENCE_ID;
+  if (!apiKey || !audienceId) {
     return json({ error: 'Newsletter is not configured.' }, 500);
   }
 
@@ -35,29 +36,19 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'Please enter a valid email address.' }, 400);
   }
 
-  const response = await fetch(BUTTONDOWN_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      Authorization: `Token ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email_address: email.trim() }),
+  const resend = new Resend(apiKey);
+  const { error } = await resend.contacts.create({
+    email: email.trim(),
+    audienceId,
+    unsubscribed: false,
   });
 
-  if (response.ok) {
+  if (!error) {
     return json({ ok: true }, 200);
   }
 
-  // Buttondown returns 400 with { code: 'email_already_exists' } when re-subscribing.
-  let code: string | undefined;
-  try {
-    const data = (await response.json()) as { code?: string; detail?: string };
-    code = data.code;
-  } catch {
-    // ignore body parse errors
-  }
-
-  if (code === 'email_already_exists') {
+  const message = error.message?.toLowerCase() ?? '';
+  if (message.includes('already')) {
     return json({ ok: true, alreadySubscribed: true }, 200);
   }
 
