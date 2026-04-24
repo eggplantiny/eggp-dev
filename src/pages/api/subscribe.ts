@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { Resend } from 'resend';
 
 export const prerender = false;
 
@@ -35,32 +36,19 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'Please enter a valid email address.' }, 400);
   }
 
-  const response = await fetch(
-    `https://api.resend.com/audiences/${audienceId}/contacts`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: email.trim(), unsubscribed: false }),
-    }
-  );
+  const resend = new Resend(apiKey);
+  const { error } = await resend.contacts.create({
+    email: email.trim(),
+    audienceId,
+    unsubscribed: false,
+  });
 
-  let data: { id?: string; name?: string; message?: string } = {};
-  try {
-    data = await response.json();
-  } catch {
-    // ignore body parse errors
-  }
-
-  if (response.ok) {
+  if (!error) {
     return json({ ok: true }, 200);
   }
 
-  // Resend signals duplicates via validation_error with a message mentioning existence.
-  const message = data.message?.toLowerCase() ?? '';
-  if (data.name === 'validation_error' && message.includes('already')) {
+  const message = error.message?.toLowerCase() ?? '';
+  if (message.includes('already')) {
     return json({ ok: true, alreadySubscribed: true }, 200);
   }
 

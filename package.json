@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test:email": "node scripts/send-test-email.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
@@ -18,6 +19,7 @@
     "@tailwindcss/vite": "^4.1.4",
     "@vercel/analytics": "^2.0.1",
     "astro": "^6.1.6",
+    "resend": "^6.12.2",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
