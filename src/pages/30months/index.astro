@@ -1,0 +1,59 @@
+---
+import ThirtyMonthsLayout from "../../layouts/ThirtyMonthsLayout.astro";
+import { loadArchiveDocuments } from "../../lib/thirty-months/content";
+import { previewArchiveDocument } from "../../lib/thirty-months/preview";
+import { partLabel, partSlug } from "../../lib/thirty-months/types";
+
+const published = await loadArchiveDocuments();
+const previewOnly = import.meta.env.DEV && published.length === 0;
+const documents = previewOnly ? [previewArchiveDocument] : published;
+---
+
+<ThirtyMonthsLayout
+  title="30개월 / The Last Dependency"
+  description="자료 번호순으로 읽는 기록 소설 30개월 / The Last Dependency"
+  noindex={previewOnly}
+>
+  <header class="archive-topbar archive-index-topbar">
+    <a href="/">EGGP.</a>
+    <b>INDEX</b>
+  </header>
+  <main class="archive-main archive-index">
+    <header class="archive-parthead archive-index-head">
+      <div class="archive-series">30개월 / THE LAST DEPENDENCY</div>
+      <h1>ARCHIVE</h1>
+      <p class="archive-index-description">자료 번호순으로 읽는 기록 소설</p>
+      <hr />
+    </header>
+
+    {
+      documents.length > 0 ? (
+        <ol class="archive-part-list">
+          {documents.map((document) => (
+            <li>
+              <a href={`/30months/part/${partSlug(document.part)}/`}>
+                <span class="archive-part-list-label">
+                  {partLabel(document.part)}
+                </span>
+                <span class="archive-part-list-period">{document.period}</span>
+                <span class="archive-part-list-range">
+                  {document.range.from} – {document.range.to}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p class="archive-empty">아직 공개된 기록이 없습니다.</p>
+      )
+    }
+
+    {
+      previewOnly && (
+        <p class="archive-preview-note">
+          개발 서버에서는 레이아웃 검수를 위한 합성 자료를 표시합니다.
+        </p>
+      )
+    }
+  </main>
+</ThirtyMonthsLayout>

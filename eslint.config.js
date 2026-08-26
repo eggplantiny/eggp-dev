@@ -5,7 +5,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist', '.astro'],
+    ignores: ['dist', '.astro', '.vercel', '.authoring-staging'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

@@ -1,0 +1,58 @@
+---
+import ArchiveReader from "../../../components/30months/ArchiveReader";
+import ThirtyMonthsLayout from "../../../layouts/ThirtyMonthsLayout.astro";
+import { loadArchiveDocuments } from "../../../lib/thirty-months/content";
+import { previewArchiveDocument } from "../../../lib/thirty-months/preview";
+import {
+  partLabel,
+  partSlug,
+  type ArchiveDocument,
+} from "../../../lib/thirty-months/types";
+
+interface Props {
+  document: ArchiveDocument;
+  previousHref?: string;
+  nextHref?: string;
+  preview: boolean;
+}
+
+export async function getStaticPaths() {
+  const published = await loadArchiveDocuments();
+  const preview = import.meta.env.DEV && published.length === 0;
+  const documents = preview ? [previewArchiveDocument] : published;
+
+  return documents.map((document, index) => ({
+    params: { part: partSlug(document.part) },
+    props: {
+      document,
+      previousHref:
+        index > 0
+          ? `/30months/part/${partSlug(documents[index - 1].part)}/`
+          : undefined,
+      nextHref:
+        index < documents.length - 1
+          ? `/30months/part/${partSlug(documents[index + 1].part)}/`
+          : undefined,
+      preview,
+    },
+  }));
+}
+
+const { document, previousHref, nextHref, preview } = Astro.props;
+const label = partLabel(document.part);
+---
+
+<ThirtyMonthsLayout
+  title={`${label} — ${document.range.from} – ${document.range.to}`}
+  description={`30개월 / The Last Dependency ${label}, 자료 ${document.range.from}부터 ${document.range.to}`}
+  noindex={preview}
+>
+  <ArchiveReader
+    document={document}
+    indexHref="/30months/"
+    previousHref={previousHref}
+    nextHref={nextHref}
+    preview={preview}
+    client:load
+  />
+</ThirtyMonthsLayout>

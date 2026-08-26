@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { defineConfig, passthroughImageService } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import react from '@astrojs/react';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -15,7 +16,7 @@ export default defineConfig({
   site: 'https://eggp.dev',
   output: 'static',
   adapter: vercel({ entrypointResolution: 'auto' }),
-  integrations: [sitemap()],
+  integrations: [sitemap(), react()],
   image: {
     service: passthroughImageService(),
   },
