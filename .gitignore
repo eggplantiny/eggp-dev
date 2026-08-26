@@ -7,3 +7,18 @@ dist
 .env
 .env.*
 !.env.example
+
+# Private 30months authoring material must remain outside this public repository.
+# These are tripwires only; the real boundary is the external authoring workspace.
+/.authoring-staging/
+/30months-authoring/
+/canon/
+/manuscript/
+/drafts/
+30months_*canonical*.md
+30months_*substrate*.md
+30months_*atlas*.md
+30months_*storyboard*.md
+30months_*annex*.md
+30months_manuscript_format.md
+30months_web_publishing_guide.md

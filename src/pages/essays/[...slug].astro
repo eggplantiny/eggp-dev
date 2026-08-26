@@ -7,7 +7,7 @@ const entryLocale = (entry: { id: string; slug?: string }) => entryPath(entry).s
 const entryStem = (entry: { id: string; slug?: string }) => entryPath(entry).split('/').slice(1).join('/');
 
 export async function getStaticPaths() {
-  const essays = await getCollection('essays');
+  const essays = await getCollection('essays', ({ data }) => !data.draft);
 
   return essays.map((essay) => ({
     params: { slug: essay.slug ?? essay.id },

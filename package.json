@@ -10,6 +10,9 @@
     "preview": "astro preview",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "guard:install": "git config core.hooksPath .githooks",
+    "guard:private": "node scripts/check-private-leaks.mjs --staged",
+    "test:guard": "node --test scripts/check-private-leaks.test.mjs",
     "test:email": "node scripts/send-test-email.mjs"
   },
   "dependencies": {
