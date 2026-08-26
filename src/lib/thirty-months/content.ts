@@ -3,16 +3,9 @@ import type { Dirent } from "node:fs";
 import path from "node:path";
 import type { ArchiveDocument, ArchivePart } from "./types";
 
-const CONTENT_ROOT = path.resolve(
-  decodeURIComponent(
-    new URL("../../../public/30months/content/", import.meta.url).pathname,
-  ),
-);
-const MEDIA_ROOT = path.resolve(
-  decodeURIComponent(
-    new URL("../../../public/30months/m/", import.meta.url).pathname,
-  ),
-);
+const PUBLIC_ROOT = path.resolve(process.cwd(), "public", "30months");
+const CONTENT_ROOT = path.join(PUBLIC_ROOT, "content");
+const MEDIA_ROOT = path.join(PUBLIC_ROOT, "m");
 const EPISODE_FILE = /^(part-(0[1-9]|[12]\d|30)|epilogue)\.json$/;
 const MEDIA_FILE = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(?:jpe?g|png|webp)$/i;
 const ID = /^\d{4}$/;
