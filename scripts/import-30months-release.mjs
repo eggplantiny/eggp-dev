@@ -312,20 +312,26 @@ function validateDocument(document, name, referencedMedia) {
     }
 
     if (item.media !== null) {
-      if (
-        !object(item.media) ||
-        item.media.type !== "image" ||
-        !/^\/30months\/m\/[^/]+$/.test(item.media.src) ||
-        !nonempty(item.media.alt)
-      ) {
-        fail(`${at}.media: only approved public image references are accepted`);
+      if (!Array.isArray(item.media) || item.media.length === 0) {
+        fail(`${at}.media: expected null or a non-empty array`);
       }
-      exactKeys(item.media, ["type", "src", "alt", "caption"], `${at}.media`);
-      requireKeys(item.media, ["type", "src", "alt"], `${at}.media`);
-      if ("caption" in item.media && !nonempty(item.media.caption)) {
-        fail(`${at}.media.caption: expected non-empty text`);
-      }
-      referencedMedia.add(path.basename(item.media.src));
+      item.media.forEach((entry, mediaIndex) => {
+        const mediaAt = `${at}.media[${mediaIndex}]`;
+        if (
+          !object(entry) ||
+          entry.type !== "image" ||
+          !/^\/30months\/m\/[^/]+$/.test(entry.src) ||
+          !nonempty(entry.alt)
+        ) {
+          fail(`${mediaAt}: only approved public image references are accepted`);
+        }
+        exactKeys(entry, ["type", "src", "alt", "caption"], mediaAt);
+        requireKeys(entry, ["type", "src", "alt"], mediaAt);
+        if ("caption" in entry && !nonempty(entry.caption)) {
+          fail(`${mediaAt}.caption: expected non-empty text`);
+        }
+        referencedMedia.add(path.basename(entry.src));
+      });
     }
   }
 

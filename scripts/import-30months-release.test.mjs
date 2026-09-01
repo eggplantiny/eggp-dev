@@ -107,11 +107,13 @@ test("rejects symlinked release artifacts", async (t) => {
 test("rejects documents whose public media is missing", async (t) => {
   const { blog, release } = await fixture(t);
   const withMedia = structuredClone(DOCUMENT);
-  withMedia.items[0].media = {
-    type: "image",
-    src: "/30months/m/0001.webp",
-    alt: "Synthetic test image",
-  };
+  withMedia.items[0].media = [
+    {
+      type: "image",
+      src: "/30months/m/0001.webp",
+      alt: "Synthetic test image",
+    },
+  ];
   await writeFile(
     path.join(release, "content", "part-01.json"),
     `${JSON.stringify(withMedia)}\n`,

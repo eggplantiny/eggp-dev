@@ -148,18 +148,21 @@ function ArchiveBlockView({
 
 function RecordMedia({ record }: { record: ArchiveRecord }) {
   if (!record.media) return null;
-  const media = record.media;
   return (
-    <figure className="archive-media">
-      {media.type === "image" ? (
-        <img src={media.src} alt={media.alt} loading="lazy" />
-      ) : (
-        <video controls preload="metadata" aria-label={media.alt}>
-          <source src={media.src} />
-        </video>
-      )}
-      {media.caption && <figcaption>{media.caption}</figcaption>}
-    </figure>
+    <>
+      {record.media.map((media, index) => (
+        <figure className="archive-media" key={`${record.id}-media-${index}`}>
+          {media.type === "image" ? (
+            <img src={media.src} alt={media.alt} loading="lazy" />
+          ) : (
+            <video controls preload="metadata" aria-label={media.alt}>
+              <source src={media.src} />
+            </video>
+          )}
+          {media.caption && <figcaption>{media.caption}</figcaption>}
+        </figure>
+      ))}
+    </>
   );
 }
 

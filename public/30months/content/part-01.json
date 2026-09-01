@@ -386,7 +386,20 @@
       "time": "Day 1 13:22",
       "provenance": "수집 Day 1 16:00 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0007-1.jpg",
+          "alt": "병원 주차장의 파란 천막. 접수용 책상. 줄 선 사람들.",
+          "caption": "권역응급의료센터 주차장 · Day 1"
+        },
+        {
+          "type": "image",
+          "src": "/30months/m/0007-2.jpg",
+          "alt": "손에 든 종이 접수번호표. 숫자 214.",
+          "caption": "원외 접수처 · Day 1"
+        }
+      ],
       "blocks": [
         {
           "b": "post",
@@ -516,7 +529,14 @@
       "time": "Day 2 06:50",
       "provenance": "수집 Day 5 11:20 · C-3",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0009-1.jpg",
+          "alt": "작업대 위 고무 팽창이음. 플랜지 구멍 옆 분필 숫자.",
+          "caption": "촬영본 정지 화면 · Day 2"
+        }
+      ],
       "blocks": [
         {
           "b": "cue",

@@ -120,20 +120,25 @@ function assertPublicDocument(
       );
     }
     if (item.media !== null) {
-      if (!isObject(item.media)) {
+      if (!Array.isArray(item.media) || item.media.length === 0) {
         throw new Error(`${file}: invalid media at items[${index}]`);
       }
-      assertExactKeys(
-        item.media,
-        ["type", "src", "alt", "caption"],
-        `${file}.items[${index}].media`,
-      );
-      if (
-        !["image", "video"].includes(String(item.media.type)) ||
-        !/^\/30months\/m\/[^/]+$/.test(String(item.media.src)) ||
-        typeof item.media.alt !== "string"
-      ) {
-        throw new Error(`${file}: invalid media at items[${index}]`);
+      for (const entry of item.media) {
+        if (!isObject(entry)) {
+          throw new Error(`${file}: invalid media at items[${index}]`);
+        }
+        assertExactKeys(
+          entry,
+          ["type", "src", "alt", "caption"],
+          `${file}.items[${index}].media`,
+        );
+        if (
+          !["image", "video"].includes(String(entry.type)) ||
+          !/^\/30months\/m\/[^/]+$/.test(String(entry.src)) ||
+          typeof entry.alt !== "string"
+        ) {
+          throw new Error(`${file}: invalid media at items[${index}]`);
+        }
       }
     }
   }
@@ -181,7 +186,7 @@ export async function loadArchiveDocuments(): Promise<ArchiveDocument[]> {
     sorted.flatMap((document) =>
       document.items.flatMap((item) =>
         item.kind === "record" && item.media
-          ? [path.basename(item.media.src)]
+          ? item.media.map((entry) => path.basename(entry.src))
           : [],
       ),
     ),
