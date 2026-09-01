@@ -62,7 +62,7 @@ function ArchiveBlockView({ block }: { block: ArchiveBlock }) {
       );
     case "post":
       return (
-        <div className="archive-post">
+        <div className={block.reply ? "archive-post archive-post-reply" : "archive-post"}>
           <div className="archive-post-time">{block.ts}</div>
           <div>{block.text}</div>
         </div>
@@ -286,7 +286,15 @@ export default function ArchiveReader({
                   )}
                   <RecordProvenance record={item} visible={showProvenance} />
                 </header>
-                {renderRecordBody(item)}
+                <div
+                  className={
+                    item.source.includes("대화방")
+                      ? "archive-body archive-body-chat"
+                      : "archive-body"
+                  }
+                >
+                  {renderRecordBody(item)}
+                </div>
                 <RecordMedia record={item} />
               </section>
             );
