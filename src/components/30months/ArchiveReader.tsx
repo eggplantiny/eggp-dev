@@ -220,15 +220,37 @@ export default function ArchiveReader({
         </div>
       );
     }
+    // Consecutive posts group into threads: a top-level post plus the reply
+    // posts that follow it, the way board and chat clients render exchanges.
+    const segments: ReactNode[] = [];
+    let thread: ReactNode[] = [];
+    const flushThread = (key: string) => {
+      if (thread.length === 0) return;
+      segments.push(
+        <div className="archive-thread" key={key}>
+          {thread}
+        </div>,
+      );
+      thread = [];
+    };
+    record.blocks.forEach((block, index) => {
+      const key = `${record.id}-${index}`;
+      if (block.b === "post") {
+        if (!block.reply) flushThread(`${key}-t`);
+        thread.push(
+          <ArchiveBlockView block={block} personas={record.personas} key={key} />,
+        );
+        return;
+      }
+      flushThread(`${key}-t`);
+      segments.push(
+        <ArchiveBlockView block={block} personas={record.personas} key={key} />,
+      );
+    });
+    flushThread(`${record.id}-tail`);
     return (
       <div className={`archive-record-body archive-type-${record.type}`}>
-        {record.blocks.map((block, index) => (
-          <ArchiveBlockView
-            block={block}
-            personas={record.personas}
-            key={`${record.id}-${index}`}
-          />
-        ))}
+        {segments}
       </div>
     );
   };

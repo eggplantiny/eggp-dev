@@ -305,9 +305,8 @@ body.archive-site :focus-visible {
 }
 
 .archive-post {
-  display: flex;
-  gap: 0.8rem;
-  margin: 0 0 0.1rem;
+  display: block;
+  margin: 0;
 }
 
 .archive-post-time {
@@ -629,17 +628,9 @@ body.archive-site :focus-visible {
 }
 
 
-.archive-post-reply {
-  margin-left: 1.4rem;
-  padding-left: 0.7rem;
-  border-left: 2px solid var(--archive-rule, currentColor);
-}
 
-.archive-body-chat .archive-post {
-  border-bottom: none;
-  padding-top: 0.15rem;
-  padding-bottom: 0.15rem;
-}
+
+
 
 .archive-body-chat .archive-post-time {
   opacity: 0.65;
@@ -650,11 +641,7 @@ body.archive-site :focus-visible {
 }
 
 
-.archive-post-head {
-  display: flex;
-  align-items: baseline;
-  gap: 0.55rem;
-}
+
 
 .archive-post-author {
   font-family: var(--archive-mono);
@@ -669,10 +656,56 @@ body.archive-site :focus-visible {
   opacity: 0.65;
 }
 
-.archive-post-text {
-  margin-top: 0.12rem;
-}
+
 
 .archive-body-chat .archive-post-author {
   font-weight: 500;
+}
+
+
+/* 스레드형 댓글 레이아웃 — 원글과 답글이 한 묶음으로 붙고,
+   묶음 사이에 간격과 경계선이 온다. 본문 왼쪽 정렬선은 작성자
+   이름 길이와 무관하게 일정하다. */
+.archive-thread {
+  padding: 0.55rem 0;
+}
+
+.archive-thread + .archive-thread {
+  border-top: 1px solid
+    color-mix(in srgb, var(--archive-rule, currentColor) 45%, transparent);
+}
+
+.archive-thread .archive-post + .archive-post {
+  margin-top: 0.5rem;
+}
+
+.archive-post-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  line-height: 1.3;
+}
+
+.archive-post-text {
+  margin-top: 0.15rem;
+  line-height: 1.62;
+}
+
+.archive-post-reply {
+  margin-left: 1.15rem;
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--archive-rule, currentColor);
+}
+
+/* 대화방형 — 경계선 없이 로그처럼 흐르고, 답장 표시는 점선 */
+.archive-body-chat .archive-thread {
+  padding: 0.3rem 0;
+}
+
+.archive-body-chat .archive-thread + .archive-thread {
+  border-top: none;
+}
+
+.archive-body-chat .archive-post-reply {
+  border-left-style: dotted;
 }
