@@ -311,8 +311,12 @@ function validateDocument(document, name, referencedMedia) {
       if (cuts !== 0)
         fail(`${at}.blocks: only partial records may contain cut`);
     } else {
-      if ("damage" in item)
-        fail(`${at}.damage: only partial records may have damage`);
+      if ("damage" in item) {
+        exactKeys(item.damage, ["duration"], `${at}.damage`);
+        requireKeys(item.damage, ["duration"], `${at}.damage`);
+        if (!nonempty(item.damage.duration))
+          fail(`${at}.damage: duration must be non-empty`);
+      }
       if (cuts !== 0)
         fail(`${at}.blocks: only partial records may contain cut`);
     }

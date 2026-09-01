@@ -391,10 +391,18 @@ export default function ArchiveReader({
                   {item.damage && (
                     <div className="archive-damage">
                       {item.damage.duration}
-                      <br />
-                      {item.damage.recovered
-                        ? `파일 손상 · 복구 가능 ${item.damage.recovered}`
-                        : "파일 소실 · 복구 불가"}
+                      {item.preservation === "partial" && (
+                        <>
+                          <br />
+                          파일 손상 · 복구 가능 {item.damage.recovered}
+                        </>
+                      )}
+                      {item.preservation === "lost" && (
+                        <>
+                          <br />
+                          파일 소실 · 복구 불가
+                        </>
+                      )}
                     </div>
                   )}
                   <RecordProvenance record={item} visible={showProvenance} />
