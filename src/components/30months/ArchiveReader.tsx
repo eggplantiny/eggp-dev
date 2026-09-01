@@ -196,7 +196,7 @@ export default function ArchiveReader({
   const [currentId, setCurrentId] = useState(
     firstRecord?.id ?? document.range.from,
   );
-  const [showProvenance, setShowProvenance] = useState(false);
+  const showProvenance = false;
   const scope = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -396,14 +396,6 @@ export default function ArchiveReader({
         </footer>
       </main>
 
-      <button
-        type="button"
-        className="archive-provenance-toggle"
-        aria-pressed={showProvenance}
-        onClick={() => setShowProvenance((value) => !value)}
-      >
-        {showProvenance ? "수집 경로 숨기기" : "수집 경로 보기"}
-      </button>
       <a className="archive-notice-link" href="/30months/#notice">
         일러두기
       </a>

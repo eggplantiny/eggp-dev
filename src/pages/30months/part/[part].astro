@@ -43,7 +43,7 @@ const label = partLabel(document.part);
 ---
 
 <ThirtyMonthsLayout
-  title={`${label} — ${document.range.from} – ${document.range.to}`}
+  title={`30개월 — ${label === "EPILOGUE" ? "Epilogue" : `Part ${document.part}`}`}
   description={`30개월 / The Last Dependency ${label}, 자료 ${document.range.from}부터 ${document.range.to}`}
   noindex={preview}
 >
