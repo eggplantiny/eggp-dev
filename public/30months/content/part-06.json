@@ -714,7 +714,14 @@
       "time": "Day 32 23:00",
       "provenance": "수집 Day 33 07:00 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0101.jpg",
+          "alt": "냉장고에 붙인 손글씨 시간표. 흔들려서 읽히지 않는다.",
+          "caption": "게시판 첨부 · Day 32"
+        }
+      ],
       "blocks": [
         {
           "b": "post",

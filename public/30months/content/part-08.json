@@ -42,7 +42,14 @@
       "time": "Day 32 22:00",
       "provenance": "수집 Day 33 07:00 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0128.jpg",
+          "alt": "거실 텔레비전의 파란 안내 화면. 소파 팔걸이의 리모컨.",
+          "caption": "게시판 첨부 · Day 32"
+        }
+      ],
       "blocks": [
         {
           "b": "post",

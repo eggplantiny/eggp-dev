@@ -783,7 +783,14 @@
       "time": "Day 21 21:40",
       "provenance": "수집 Day 22 07:00 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0068.jpg",
+          "alt": "식탁 위의 휴대전화. 통보 문자 화면. 조명 반사로 내용 판독 불가.",
+          "caption": "게시판 첨부 · Day 21"
+        }
+      ],
       "blocks": [
         {
           "b": "post",
