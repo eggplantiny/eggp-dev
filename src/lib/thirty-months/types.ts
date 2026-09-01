@@ -16,7 +16,7 @@ export type ArchiveBlock =
   | { b: "para"; text: string }
   | { b: "cue"; text: string }
   | { b: "silence"; sec: number; note?: string }
-  | { b: "post"; ts: string; text: string; who?: string; reply?: boolean }
+  | { b: "post"; ts: string; text: string; who?: string; reply?: boolean; re?: string }
   | { b: "notice"; text: string }
   | { b: "hand"; text: string }
   | { b: "ledger"; name: string; rows: string; note?: string }

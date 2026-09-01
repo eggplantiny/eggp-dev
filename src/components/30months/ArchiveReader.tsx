@@ -39,9 +39,11 @@ const silenceHeight = (seconds: number) =>
 function ArchiveBlockView({
   block,
   personas,
+  depth = 0,
 }: {
   block: ArchiveBlock;
   personas?: Record<string, string>;
+  depth?: number;
 }) {
   switch (block.b) {
     case "speech":
@@ -69,7 +71,10 @@ function ArchiveBlockView({
     case "post": {
       const author = block.who ? (personas?.[block.who] ?? block.who) : null;
       return (
-        <div className={block.reply ? "archive-post archive-post-reply" : "archive-post"}>
+        <div
+          className={depth > 0 ? "archive-post archive-post-reply" : "archive-post"}
+          style={depth > 0 ? { marginLeft: `${(depth - 1) * 1.35}rem` } : undefined}
+        >
           <div className="archive-post-head">
             {author && <span className="archive-post-author">{author}</span>}
             <span className="archive-post-time">{block.ts}</span>
@@ -258,8 +263,30 @@ export default function ArchiveReader({
         </div>
       );
     }
-    // Consecutive posts group into threads: a top-level post plus the reply
-    // posts that follow it, the way board and chat clients render exchanges.
+    // Posts thread by parent reference: a bare reply attaches to the nearest
+    // preceding top-level post, a targeted reply (re) to that author's nearest
+    // preceding post, and depth follows the parent chain. Order stays strictly
+    // chronological — the archive never reorders records.
+    type PostBlock = Extract<ArchiveBlock, { b: "post" }>;
+    const depths = new Map<number, number>();
+    const lastIndexByAuthor = new Map<string, number>();
+    let lastTopLevel = -1;
+    record.blocks.forEach((block, index) => {
+      if (block.b !== "post") return;
+      const post = block as PostBlock;
+      let depth = 0;
+      if (post.re !== undefined) {
+        const parentIndex = lastIndexByAuthor.get(post.re) ?? lastTopLevel;
+        depth = parentIndex >= 0 ? (depths.get(parentIndex) ?? 0) + 1 : 1;
+      } else if (post.reply) {
+        depth = 1;
+      } else {
+        lastTopLevel = index;
+      }
+      depths.set(index, Math.min(depth, 3));
+      if (post.who) lastIndexByAuthor.set(post.who, index);
+    });
+
     const segments: ReactNode[] = [];
     let thread: ReactNode[] = [];
     const flushThread = (key: string) => {
@@ -274,9 +301,15 @@ export default function ArchiveReader({
     record.blocks.forEach((block, index) => {
       const key = `${record.id}-${index}`;
       if (block.b === "post") {
-        if (!block.reply) flushThread(`${key}-t`);
+        const depth = depths.get(index) ?? 0;
+        if (depth === 0) flushThread(`${key}-t`);
         thread.push(
-          <ArchiveBlockView block={block} personas={record.personas} key={key} />,
+          <ArchiveBlockView
+            block={block}
+            personas={record.personas}
+            depth={depth}
+            key={key}
+          />,
         );
         return;
       }

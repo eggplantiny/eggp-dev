@@ -42,7 +42,7 @@ const BLOCK_KEYS = {
   para: { allowed: ["b", "text"], required: ["b", "text"] },
   cue: { allowed: ["b", "text"], required: ["b", "text"] },
   silence: { allowed: ["b", "sec", "note"], required: ["b", "sec"] },
-  post: { allowed: ["b", "ts", "text", "who", "reply"], required: ["b", "ts", "text"] },
+  post: { allowed: ["b", "ts", "text", "who", "reply", "re"], required: ["b", "ts", "text"] },
   notice: { allowed: ["b", "text"], required: ["b", "text"] },
   hand: { allowed: ["b", "text"], required: ["b", "text"] },
   ledger: {

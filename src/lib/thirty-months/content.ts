@@ -29,7 +29,7 @@ const BLOCK_KEYS: Record<string, string[]> = {
   para: ["b", "text"],
   cue: ["b", "text"],
   silence: ["b", "sec", "note"],
-  post: ["b", "ts", "text", "who", "reply"],
+  post: ["b", "ts", "text", "who", "reply", "re"],
   notice: ["b", "text"],
   hand: ["b", "text"],
   ledger: ["b", "name", "rows", "note"],
