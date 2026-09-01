@@ -34,7 +34,7 @@ function placementClock(record: ArchiveRecord): string | null {
 }
 
 const silenceHeight = (seconds: number) =>
-  Math.min(Math.max(1.6 + seconds * 0.6, 1.6), 22);
+  Math.min(Math.max(1.4 + seconds * 0.22, 1.4), 8);
 
 function ArchiveBlockView({
   block,
