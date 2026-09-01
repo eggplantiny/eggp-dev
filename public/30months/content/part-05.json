@@ -46,7 +46,14 @@
       "time": "Day 18 21:30",
       "provenance": "수집 Day 19 07:00 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0074.jpg",
+          "alt": "식탁 위의 사무실 화분. 잎에 먼지가 앉아 있다.",
+          "caption": "집 안 식탁 · Day 18"
+        }
+      ],
       "blocks": [
         {
           "b": "post",
@@ -726,7 +733,14 @@
       "time": "Day 28 21:00",
       "provenance": "수집 Day 29 07:00 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0087.jpg",
+          "alt": "코팅한 등록증. 조명 반사로 글자 판독 불가.",
+          "caption": "코팅한 민간차량 등록증 · Day 28"
+        }
+      ],
       "blocks": [
         {
           "b": "post",

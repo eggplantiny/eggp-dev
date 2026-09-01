@@ -175,7 +175,14 @@
       "time": "Day 10 21:30",
       "provenance": "수집 Day 11 00:20 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0023.jpg",
+          "alt": "현관 바닥의 반송 상자. 테이프 봉인 그대로. 위에 붙은 안내지와 뭉개진 도장.",
+          "caption": "반려된 면회 물품 · Day 10"
+        }
+      ],
       "blocks": [
         {
           "b": "post",
