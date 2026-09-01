@@ -173,7 +173,14 @@
       "time": "Day 16 05:40",
       "provenance": "수집 Day 16 18:00 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0058.jpg",
+          "alt": "새벽 버스 차고지. 시동을 건 버스 한 대 앞에서 점검 망치를 든 손. 뒤편 차량들은 줄지어 주차돼 있다.",
+          "caption": "버스 차고지 점검 · Day 16"
+        }
+      ],
       "blocks": [
         {
           "b": "cue",

@@ -895,7 +895,14 @@
       "time": "Day 49 10:40",
       "provenance": "수집 Day 49 11:30 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0143.jpg",
+          "alt": "배관 하부를 비춘 사진. 느슨한 볼트와 분필로 여러 번 그은 동그라미.",
+          "caption": "급수펌프동 배관 하부 · Day 49"
+        }
+      ],
       "blocks": [
         {
           "b": "cue",
@@ -912,7 +919,7 @@
         },
         {
           "b": "speech",
-          "who": "—",
+          "who": "미상",
           "text": "(혼잣말, 작게) 여기인가."
         },
         {
@@ -954,7 +961,7 @@
         },
         {
           "b": "speech",
-          "who": "—",
+          "who": "미상",
           "text": "(혼잣말) 아니면 저쪽인가."
         },
         {

@@ -647,7 +647,14 @@
         "recorder": "윤재경"
       },
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0085.jpg",
+          "alt": "민간차량 등록 창구. 트럭 열쇠를 쥔 채 신청서를 쓰는 사람과 가득 찬 대기석.",
+          "caption": "민간차량 등록 현장 · Day 27"
+        }
+      ],
       "blocks": [
         {
           "b": "cue",
