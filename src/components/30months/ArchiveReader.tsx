@@ -78,20 +78,58 @@ function ArchiveBlockView({
         </div>
       );
     }
-    case "notice":
-      return <div className="archive-notice">{block.text}</div>;
+    case "notice": {
+      const lines = block.text.split("\n");
+      const hasTitle = lines[0]?.startsWith("■");
+      const title = hasTitle ? lines[0].replace(/^■\s*/, "") : null;
+      const body = (hasTitle ? lines.slice(1) : lines).join("\n").trim();
+      return (
+        <div className="archive-notice">
+          {title && <div className="archive-notice-title">{title}</div>}
+          <div className="archive-notice-body">{body}</div>
+        </div>
+      );
+    }
     case "hand":
       return <div className="archive-hand">{block.text}</div>;
-    case "ledger":
+    case "ledger": {
+      // Source rows align columns with runs of spaces; fonts must not be
+      // trusted to preserve that. Split on 2+ spaces into an invisible table.
+      const rows = block.rows
+        .split("\n")
+        .map((row) => row.trim())
+        .filter(Boolean)
+        .map((row) => row.split(/\s{2,}/).map((cell) => cell.trim()));
+      const columnCount = Math.max(1, ...rows.map((cells) => cells.length));
       return (
         <div className="archive-ledger">
           <div className="archive-ledger-name">{block.name}</div>
-          <pre>{block.rows}</pre>
+          <table className="archive-ledger-table">
+            <tbody>
+              {rows.map((cells, rowIndex) => (
+                <tr key={rowIndex}>
+                  {cells.map((cell, cellIndex) => {
+                    const last = cellIndex === cells.length - 1;
+                    return (
+                      <td
+                        key={cellIndex}
+                        colSpan={last ? columnCount - cells.length + 1 : 1}
+                        className={last && cells.length > 1 ? "archive-ledger-value" : "archive-ledger-key"}
+                      >
+                        {cell}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
           {block.note && (
             <div className="archive-ledger-note">· {block.note}</div>
           )}
         </div>
       );
+    }
     case "editorial":
       return (
         <div className="archive-editorial">

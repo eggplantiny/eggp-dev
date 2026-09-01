@@ -8,6 +8,7 @@
   --archive-rule: #bcbeb7;
   --archive-rule-hair: #caccc5;
   --archive-serif: "Gowun Batang", serif;
+  --archive-hand-font: "Nanum Pen Script", "Gowun Batang", cursive;
   --archive-sans: "IBM Plex Sans KR", system-ui, sans-serif;
   --archive-mono: "IBM Plex Mono", "IBM Plex Sans KR", ui-monospace, monospace;
   --archive-measure: 35rem;
@@ -349,21 +350,24 @@ body.archive-site :focus-visible {
 }
 
 .archive-notice {
-  margin: 1rem 0;
-  padding: 1.3rem 1.2rem;
+  margin: 1.7rem 0;
+  padding: 1.6rem 1.5rem 1.5rem;
   border: 1px solid var(--archive-rule);
   background: var(--archive-paper-2);
+  font-family: var(--archive-sans);
+  line-height: 1.9;
   font-size: 0.95em;
   line-height: 1.85;
   white-space: pre-wrap;
 }
 
 .archive-hand {
-  margin: 0.9rem 0 0;
+  margin: 1.1rem 0 0;
   padding-left: 0.2rem;
   color: var(--archive-ink-2);
-  font-family: var(--archive-serif);
-  font-size: 0.95em;
+  font-family: var(--archive-hand-font);
+  font-size: 1.35em;
+  line-height: 1.5;
 }
 
 .archive-ledger {
@@ -380,11 +384,26 @@ body.archive-site :focus-visible {
   font-weight: 500;
 }
 
-.archive-ledger pre {
-  margin: 0;
-  font: inherit;
+.archive-ledger-table {
+  border-collapse: collapse;
+  width: 100%;
   font-variant-numeric: tabular-nums;
-  white-space: pre-wrap;
+}
+
+.archive-ledger-table td {
+  padding: 0.22rem 0;
+  vertical-align: top;
+  line-height: 1.65;
+}
+
+.archive-ledger-table td.archive-ledger-key {
+  padding-right: 1.8rem;
+  white-space: nowrap;
+  color: var(--archive-ink-2);
+}
+
+.archive-ledger-table td.archive-ledger-value {
+  width: 100%;
 }
 
 .archive-ledger-note {
@@ -708,4 +727,37 @@ body.archive-site :focus-visible {
 
 .archive-body-chat .archive-post-reply {
   border-left-style: dotted;
+}
+
+
+/* 공고 제목·본문 위계 */
+.archive-notice-title {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.95rem;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--archive-rule, currentColor) 55%, transparent);
+}
+
+.archive-notice-body {
+  white-space: pre-line;
+}
+
+/* 게시글·대화 본문은 화면의 글 — 고딕 */
+.archive-post-text {
+  font-family: var(--archive-sans);
+}
+
+/* 호흡: 스레드·대화방 간격 */
+.archive-thread {
+  padding: 0.8rem 0;
+}
+
+.archive-body-chat .archive-thread {
+  padding: 0.5rem 0;
+}
+
+.archive-post-text {
+  line-height: 1.7;
 }
