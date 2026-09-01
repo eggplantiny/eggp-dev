@@ -22,13 +22,14 @@ const RECORD_KEYS = [
   "damage",
   "media",
   "blocks",
+  "personas",
 ];
 const BLOCK_KEYS: Record<string, string[]> = {
   speech: ["b", "who", "text"],
   para: ["b", "text"],
   cue: ["b", "text"],
   silence: ["b", "sec", "note"],
-  post: ["b", "ts", "text", "reply"],
+  post: ["b", "ts", "text", "who", "reply"],
   notice: ["b", "text"],
   hand: ["b", "text"],
   ledger: ["b", "name", "rows", "note"],

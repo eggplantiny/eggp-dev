@@ -36,7 +36,13 @@ function placementClock(record: ArchiveRecord): string | null {
 const silenceHeight = (seconds: number) =>
   Math.min(Math.max(1.6 + seconds * 0.6, 1.6), 22);
 
-function ArchiveBlockView({ block }: { block: ArchiveBlock }) {
+function ArchiveBlockView({
+  block,
+  personas,
+}: {
+  block: ArchiveBlock;
+  personas?: Record<string, string>;
+}) {
   switch (block.b) {
     case "speech":
       return (
@@ -60,13 +66,18 @@ function ArchiveBlockView({ block }: { block: ArchiveBlock }) {
           </div>
         </div>
       );
-    case "post":
+    case "post": {
+      const author = block.who ? (personas?.[block.who] ?? block.who) : null;
       return (
         <div className={block.reply ? "archive-post archive-post-reply" : "archive-post"}>
-          <div className="archive-post-time">{block.ts}</div>
-          <div>{block.text}</div>
+          <div className="archive-post-head">
+            {author && <span className="archive-post-author">{author}</span>}
+            <span className="archive-post-time">{block.ts}</span>
+          </div>
+          <div className="archive-post-text">{block.text}</div>
         </div>
       );
+    }
     case "notice":
       return <div className="archive-notice">{block.text}</div>;
     case "hand":
@@ -212,7 +223,11 @@ export default function ArchiveReader({
     return (
       <div className={`archive-record-body archive-type-${record.type}`}>
         {record.blocks.map((block, index) => (
-          <ArchiveBlockView block={block} key={`${record.id}-${index}`} />
+          <ArchiveBlockView
+            block={block}
+            personas={record.personas}
+            key={`${record.id}-${index}`}
+          />
         ))}
       </div>
     );

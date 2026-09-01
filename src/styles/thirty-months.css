@@ -186,7 +186,7 @@ body.archive-site :focus-visible {
   text-decoration: underline;
 }
 
-.archive-notice {
+.archive-guide {
   margin-top: 3rem;
   padding-top: 1.4rem;
   border-top: 1px solid var(--archive-rule, currentColor);
@@ -194,17 +194,17 @@ body.archive-site :focus-visible {
   line-height: 1.8;
 }
 
-.archive-notice h2 {
+.archive-guide h2 {
   font-size: 0.9rem;
   margin-bottom: 0.8rem;
 }
 
-.archive-notice ol {
+.archive-guide ol {
   margin: 0.6rem 0 0.9rem 1.2rem;
   padding: 0;
 }
 
-.archive-notice p:last-child {
+.archive-guide p:last-child {
   color: var(--archive-meta);
 }
 
@@ -647,4 +647,32 @@ body.archive-site :focus-visible {
 
 .archive-body-chat .archive-post-reply {
   border-left-style: dotted;
+}
+
+
+.archive-post-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+}
+
+.archive-post-author {
+  font-family: var(--archive-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--archive-ink, inherit);
+  opacity: 0.9;
+}
+
+.archive-post-head .archive-post-time {
+  font-size: 0.68rem;
+  opacity: 0.65;
+}
+
+.archive-post-text {
+  margin-top: 0.12rem;
+}
+
+.archive-body-chat .archive-post-author {
+  font-weight: 500;
 }
