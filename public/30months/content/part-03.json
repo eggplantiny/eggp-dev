@@ -245,7 +245,14 @@
       "time": "Day 12 21:40",
       "provenance": "수집 Day 13 00:30 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0041-1.jpg",
+          "alt": "동트기 전 담장을 따라 선 줄. 등을 보인 사람들. 닫힌 철문.",
+          "caption": "권역 화장시설 정문 앞 · Day 12"
+        }
+      ],
       "blocks": [
         {
           "b": "post",

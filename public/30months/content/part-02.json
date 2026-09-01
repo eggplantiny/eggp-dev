@@ -771,7 +771,14 @@
       "time": "Day 13 21:40",
       "provenance": "수집 Day 14 07:00 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0033-1.jpg",
+          "alt": "밤의 체육관 정문. 유리 안쪽의 종이 공고. 플래시 반사로 글자 판독 불가.",
+          "caption": "북부체육관 정문 · Day 13"
+        }
+      ],
       "blocks": [
         {
           "b": "post",

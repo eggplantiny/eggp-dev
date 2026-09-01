@@ -318,7 +318,14 @@
         "recorder": "윤재경"
       },
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0062.jpg",
+          "alt": "빈 정류장. 벤치의 우산 하나. 반쯤 뜯긴 시간표.",
+          "caption": "중앙로 정류장 · Day 17"
+        }
+      ],
       "blocks": [
         {
           "b": "cue",
