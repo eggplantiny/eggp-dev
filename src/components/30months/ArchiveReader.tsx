@@ -19,8 +19,19 @@ const attributionLabels = {
   subject: "대상",
   interviewer: "면담자",
   purpose: "목적",
-  testimonyTime: "증언 시점",
 };
+
+// R-3/R-4에 의해 배치 기준이 되는 두 번째 시계. 헤더에 상시 노출한다 —
+// 배열 원칙이 공표되어 있어야 보존 번호와 시점의 어긋남이 읽힌다.
+function placementClock(record: ArchiveRecord): string | null {
+  const testimony = record.attribution?.testimonyTime;
+  if (testimony) return `증언대상 ${testimony}`;
+  if (record.type === "DX" && record.provenance) {
+    const collected = record.provenance.split("·")[0]?.trim();
+    if (collected) return collected;
+  }
+  return null;
+}
 
 const silenceHeight = (seconds: number) =>
   Math.min(Math.max(1.6 + seconds * 0.6, 1.6), 22);
@@ -106,10 +117,12 @@ function RecordProvenance({
   visible: boolean;
 }) {
   const attribution = record.attribution
-    ? Object.entries(record.attribution).map(
-        ([key, value]) =>
-          `${attributionLabels[key as keyof typeof attributionLabels]} ${value}`,
-      )
+    ? Object.entries(record.attribution)
+        .filter(([key]) => key in attributionLabels)
+        .map(
+          ([key, value]) =>
+            `${attributionLabels[key as keyof typeof attributionLabels]} ${value}`,
+        )
     : [];
   const lines = [record.provenance, ...attribution].filter(Boolean);
   if (lines.length === 0) return null;
@@ -259,6 +272,11 @@ export default function ArchiveReader({
                   <h2>{item.id}</h2>
                   <div className="archive-source">{item.source}</div>
                   <div className="archive-time">{item.time}</div>
+                  {placementClock(item) && (
+                    <div className="archive-time-anchor">
+                      {placementClock(item)}
+                    </div>
+                  )}
                   {item.damage && (
                     <div className="archive-damage">
                       {item.damage.duration}
@@ -303,6 +321,9 @@ export default function ArchiveReader({
       >
         {showProvenance ? "수집 경로 숨기기" : "수집 경로 보기"}
       </button>
+      <a className="archive-notice-link" href="/30months/#notice">
+        일러두기
+      </a>
     </div>
   );
 }

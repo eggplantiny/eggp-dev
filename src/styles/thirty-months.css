@@ -164,6 +164,50 @@ body.archive-site :focus-visible {
   line-height: 1.55;
 }
 
+.archive-time-anchor {
+  margin-top: 0.1rem;
+  color: var(--archive-ink, inherit);
+  font-family: var(--archive-mono);
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
+.archive-notice-link {
+  position: fixed;
+  right: 1rem;
+  bottom: 3.4rem;
+  font-family: var(--archive-mono);
+  font-size: 0.72rem;
+  color: var(--archive-meta);
+  text-decoration: none;
+}
+
+.archive-notice-link:hover {
+  text-decoration: underline;
+}
+
+.archive-notice {
+  margin-top: 3rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--archive-rule, currentColor);
+  font-size: 0.86rem;
+  line-height: 1.8;
+}
+
+.archive-notice h2 {
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+}
+
+.archive-notice ol {
+  margin: 0.6rem 0 0.9rem 1.2rem;
+  padding: 0;
+}
+
+.archive-notice p:last-child {
+  color: var(--archive-meta);
+}
+
 .archive-provenance {
   max-height: 0;
   margin-top: 0.35rem;
