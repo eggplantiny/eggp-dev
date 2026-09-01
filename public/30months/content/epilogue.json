@@ -22,7 +22,14 @@
         "testimonyTime": "Month 100"
       },
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0503.jpg",
+          "alt": "마을 끝 밭과 철길. 지평선에 기계 단지의 옅은 윤곽.",
+          "caption": "면 외곽 · Month 100"
+        }
+      ],
       "blocks": [
         {
           "b": "speech",
