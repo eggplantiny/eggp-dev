@@ -44,7 +44,7 @@ export interface ArchiveRecord {
     >
   >;
   preservation: "full" | "partial" | "lost";
-  damage?: { duration: string; recovered: string };
+  damage?: { duration: string; recovered?: string };
   personas?: Record<string, string>;
   media: ArchiveMedia[] | null;
   blocks: ArchiveBlock[];
