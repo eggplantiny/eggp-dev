@@ -84,7 +84,14 @@
       "time": "Day 15 19:20",
       "provenance": "수집 Day 16 07:00 · C-2",
       "preservation": "full",
-      "media": null,
+      "media": [
+        {
+          "type": "image",
+          "src": "/30months/m/0057-1.jpg",
+          "alt": "복도에 세워 둔 자전거. 먼지 닦은 자국. 핸들에 걸린 걸레. 바닥의 손펌프.",
+          "caption": "아파트 복도 · Day 15"
+        }
+      ],
       "blocks": [
         {
           "b": "post",
