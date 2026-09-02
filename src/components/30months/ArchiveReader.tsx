@@ -14,6 +14,43 @@ interface Props {
   preview?: boolean;
 }
 
+type PostBlock = Extract<ArchiveBlock, { b: "post" }>;
+
+interface ThreadPostNode {
+  block: PostBlock;
+  children: ThreadPostNode[];
+  index: number;
+}
+
+const THREAD_GAP_MINUTES = 20;
+
+function elapsedClockMinutes(from: string, to: string): number | null {
+  const parse = (value: string) => {
+    const match = value.match(/^(\d{1,2}):(\d{2})$/);
+    if (!match) return null;
+    const hours = Number(match[1]);
+    const minutes = Number(match[2]);
+    if (hours > 23 || minutes > 59) return null;
+    return hours * 60 + minutes;
+  };
+  const start = parse(from);
+  const end = parse(to);
+  if (start === null || end === null) return null;
+  const elapsed = end - start;
+  if (elapsed >= 0) return elapsed;
+  // A large negative jump can be a real midnight crossing. Small negative
+  // jumps occur in recovered/partially ordered threads and must not become a
+  // near-24-hour archive marker.
+  return elapsed <= -12 * 60 ? elapsed + 24 * 60 : null;
+}
+
+function lastPostInThread(node: ThreadPostNode): ThreadPostNode {
+  return node.children.reduce((latest, child) => {
+    const candidate = lastPostInThread(child);
+    return candidate.index > latest.index ? candidate : latest;
+  }, node);
+}
+
 const attributionLabels = {
   recorder: "기록자",
   subject: "대상",
@@ -47,12 +84,19 @@ function ArchiveBlockView({
 }) {
   switch (block.b) {
     case "speech":
+      {
+        const speakerLength = Array.from(block.who.replace(/\s+/g, "")).length;
+        const speechClass =
+          speakerLength > 5
+            ? "archive-speech archive-speech-long-speaker"
+            : "archive-speech";
       return (
-        <div className="archive-speech">
+        <div className={speechClass}>
           <div className="archive-speaker">{block.who}</div>
-          <div>{block.text}</div>
+          <div className="archive-speech-text">{block.text}</div>
         </div>
       );
+      }
     case "para":
       return <p className="archive-paragraph">{block.text}</p>;
     case "cue":
@@ -72,8 +116,12 @@ function ArchiveBlockView({
       const author = block.who ? (personas?.[block.who] ?? block.who) : null;
       return (
         <div
-          className={depth > 0 ? "archive-post archive-post-reply" : "archive-post"}
-          style={depth > 0 ? { marginLeft: `${(depth - 1) * 1.35}rem` } : undefined}
+          className={
+            depth > 0
+              ? "archive-post archive-post-reply"
+              : "archive-post archive-post-root"
+          }
+          data-depth={depth}
         >
           <div className="archive-post-head">
             {author && <span className="archive-post-author">{author}</span>}
@@ -142,8 +190,40 @@ function ArchiveBlockView({
         </div>
       );
     case "cut":
-      return <div className="archive-void" aria-label="이후 구간 없음" />;
+      return (
+        <div className="archive-void" role="note">
+          이후 구간 소실
+        </div>
+      );
   }
+}
+
+function ArchiveThreadNodeView({
+  node,
+  personas,
+  depth = 0,
+}: {
+  node: ThreadPostNode;
+  personas?: Record<string, string>;
+  depth?: number;
+}) {
+  return (
+    <div className="archive-post-node" data-depth={depth}>
+      <ArchiveBlockView block={node.block} personas={personas} depth={depth} />
+      {node.children.length > 0 && (
+        <div className="archive-post-children">
+          {node.children.map((child) => (
+            <ArchiveThreadNodeView
+              node={child}
+              personas={personas}
+              depth={depth + 1}
+              key={`${child.index}-${child.block.ts}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function RecordMedia({ record }: { record: ArchiveRecord }) {
@@ -266,64 +346,82 @@ export default function ArchiveReader({
         </div>
       );
     }
-    // Posts thread by parent reference: a bare reply attaches to the nearest
-    // preceding top-level post, a targeted reply (re) to that author's nearest
-    // preceding post, and depth follows the parent chain. Order stays strictly
-    // chronological — the archive never reorders records.
-    type PostBlock = Extract<ArchiveBlock, { b: "post" }>;
-    const depths = new Map<number, number>();
-    const lastIndexByAuthor = new Map<string, number>();
-    let lastTopLevel = -1;
-    record.blocks.forEach((block, index) => {
-      if (block.b !== "post") return;
-      const post = block as PostBlock;
-      let depth = 0;
-      if (post.re !== undefined) {
-        const parentIndex = lastIndexByAuthor.get(post.re) ?? lastTopLevel;
-        depth = parentIndex >= 0 ? (depths.get(parentIndex) ?? 0) + 1 : 1;
-      } else if (post.reply) {
-        depth = 1;
-      } else {
-        lastTopLevel = index;
-      }
-      depths.set(index, Math.min(depth, 3));
-      if (post.who) lastIndexByAuthor.set(post.who, index);
-    });
-
     const segments: ReactNode[] = [];
-    let thread: ReactNode[] = [];
-    const flushThread = (key: string) => {
-      if (thread.length === 0) return;
-      segments.push(
-        <div className="archive-thread" key={key}>
-          {thread}
-        </div>,
-      );
-      thread = [];
+    let postRun: Array<{ block: PostBlock; index: number }> = [];
+    const flushPostRun = (key: string) => {
+      if (postRun.length === 0) return;
+
+      const nodesByIndex = new Map<number, ThreadPostNode>();
+      const lastIndexByAuthor = new Map<string, number>();
+      const roots: ThreadPostNode[] = [];
+      let lastTopLevel = -1;
+
+      postRun.forEach(({ block, index }) => {
+        const node: ThreadPostNode = { block, children: [], index };
+        nodesByIndex.set(index, node);
+
+        let parentIndex = -1;
+        if (block.re !== undefined) {
+          parentIndex = lastIndexByAuthor.get(block.re) ?? lastTopLevel;
+        } else if (block.reply) {
+          parentIndex = lastTopLevel;
+        }
+
+        const parent = nodesByIndex.get(parentIndex);
+        if (parent) {
+          parent.children.push(node);
+        } else {
+          roots.push(node);
+          lastTopLevel = index;
+        }
+
+        if (block.who) lastIndexByAuthor.set(block.who, index);
+      });
+
+      roots.forEach((root, rootIndex) => {
+        const previousRoot = roots[rootIndex - 1];
+        const previousLastPost = previousRoot
+          ? lastPostInThread(previousRoot)
+          : null;
+        const gapMinutes =
+          record.type === "WA" && previousLastPost
+            ? elapsedClockMinutes(previousLastPost.block.ts, root.block.ts)
+            : null;
+        const showGap =
+          gapMinutes !== null && gapMinutes >= THREAD_GAP_MINUTES;
+        segments.push(
+          <div className="archive-thread" key={`${key}-${rootIndex}`}>
+            {showGap && (
+              <div
+                className="archive-thread-gap"
+                aria-label={`이전 대화 이후 ${gapMinutes}분 경과`}
+              >
+                +{gapMinutes}분
+              </div>
+            )}
+            <ArchiveThreadNodeView node={root} personas={record.personas} />
+          </div>,
+        );
+      });
+      postRun = [];
     };
     record.blocks.forEach((block, index) => {
       const key = `${record.id}-${index}`;
       if (block.b === "post") {
-        const depth = depths.get(index) ?? 0;
-        if (depth === 0) flushThread(`${key}-t`);
-        thread.push(
-          <ArchiveBlockView
-            block={block}
-            personas={record.personas}
-            depth={depth}
-            key={key}
-          />,
-        );
+        postRun.push({ block, index });
         return;
       }
-      flushThread(`${key}-t`);
+      flushPostRun(`${key}-t`);
       segments.push(
         <ArchiveBlockView block={block} personas={record.personas} key={key} />,
       );
     });
-    flushThread(`${record.id}-tail`);
+    flushPostRun(`${record.id}-tail`);
+    const hasTranscript = record.blocks.some((block) => block.b === "speech");
     return (
-      <div className={`archive-record-body archive-type-${record.type}`}>
+      <div
+        className={`archive-record-body archive-type-${record.type}${hasTranscript ? " archive-has-transcript" : ""}`}
+      >
         {segments}
       </div>
     );

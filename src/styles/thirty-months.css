@@ -229,6 +229,11 @@ body.archive-site :focus-visible {
 }
 
 .archive-record-body {
+  --archive-speaker-column: 4.75rem;
+  --archive-transcript-gap: 0.7rem;
+  --archive-transcript-offset: calc(
+    var(--archive-speaker-column) + var(--archive-transcript-gap)
+  );
   margin-top: 1.5rem;
 }
 
@@ -274,20 +279,39 @@ body.archive-site :focus-visible {
 }
 
 .archive-speech {
-  display: flex;
-  gap: 0.7rem;
-  margin: 0 0 0.15rem;
+  display: grid;
+  grid-template-columns: var(--archive-speaker-column) minmax(0, 1fr);
+  align-items: first baseline;
+  column-gap: var(--archive-transcript-gap);
+  margin: 0 0 0.45rem;
+}
+
+.archive-speech-long-speaker {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 0.08rem;
+  padding-left: var(--archive-transcript-offset);
+}
+
+.archive-speech-long-speaker .archive-speaker {
+  color: var(--archive-meta);
+  font-family: var(--archive-mono);
+  font-size: 0.68rem;
+  text-align: left;
 }
 
 .archive-speaker {
-  flex: 0 0 auto;
-  min-width: 5.2em;
-  padding-top: 0.28em;
+  min-width: 0;
   color: var(--archive-ink-2);
   font-family: var(--archive-sans);
-  font-size: 0.82em;
+  font-size: 0.76rem;
   font-weight: 400;
+  line-height: 1.45;
   text-align: right;
+  text-wrap: balance;
+}
+
+.archive-speech-text {
+  min-width: 0;
 }
 
 .archive-type-DX .archive-speaker,
@@ -299,6 +323,12 @@ body.archive-site :focus-visible {
   margin: 0.5rem 0;
   color: var(--archive-meta);
   font-size: 0.85em;
+}
+
+.archive-has-transcript > .archive-cue,
+.archive-has-transcript > .archive-silence,
+.archive-has-transcript > .archive-void {
+  margin-left: var(--archive-transcript-offset);
 }
 
 .archive-paragraph {
@@ -422,10 +452,12 @@ body.archive-site :focus-visible {
 }
 
 .archive-void {
-  height: 3.4rem;
-  margin-top: 1.4rem;
-  border-top: 1px solid var(--archive-rule);
-  background: var(--archive-void);
+  margin-top: 1.15rem;
+  color: var(--archive-meta);
+  font-family: var(--archive-mono);
+  font-size: 0.62rem;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
 }
 
 .archive-lost {
@@ -608,11 +640,25 @@ body.archive-site :focus-visible {
   }
 
   .archive-speech {
-    gap: 0.55rem;
+    grid-template-columns: 1fr;
+    row-gap: 0.05rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .archive-speech-long-speaker {
+    padding-left: 0;
+  }
+
+  .archive-has-transcript > .archive-cue,
+  .archive-has-transcript > .archive-silence,
+  .archive-has-transcript > .archive-void {
+    margin-left: 0;
   }
 
   .archive-speaker {
-    min-width: 4.4em;
+    padding-top: 0;
+    font-size: 0.7rem;
+    text-align: left;
   }
 
   .archive-footer {
@@ -651,82 +697,182 @@ body.archive-site :focus-visible {
 
 
 
+.archive-post-author {
+  grid-area: author;
+  font-family: var(--archive-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--archive-ink, inherit);
+  line-height: 1.45;
+}
+
+.archive-post-head .archive-post-time {
+  grid-area: time;
+  color: var(--archive-meta);
+  font-family: var(--archive-mono);
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+}
+
+/* 게시판 저장본 — 평평한 기록 행 안에서 부모·자식 관계만 선으로
+   보존한다. 서비스 브랜드나 상호작용 UI는 재현하지 않는다. */
+.archive-thread {
+  margin: 0;
+  padding: 0.45rem 0;
+}
+
+.archive-thread + .archive-thread {
+  margin-top: 0.1rem;
+}
+
+.archive-thread-gap {
+  margin: 0.2rem 0 0.55rem;
+  color: var(--archive-meta);
+  font-family: var(--archive-mono);
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.archive-post {
+  display: grid;
+  grid-template-areas:
+    "author time"
+    "text text";
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: first baseline;
+  justify-content: stretch;
+  gap: 0.12rem 0.55rem;
+  padding: 0.28rem 0 0.46rem;
+}
+
+.archive-post-head {
+  display: contents;
+}
+
+.archive-post-text {
+  grid-area: text;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--archive-sans);
+  font-size: 0.87rem;
+  line-height: 1.7;
+}
+
+.archive-post-node {
+  position: relative;
+}
+
+.archive-post-reply {
+  padding-top: 0.38rem;
+  padding-bottom: 0.48rem;
+}
+
+.archive-post-node > .archive-post-children {
+  position: relative;
+  margin-left: 0.5rem;
+  padding: 0.05rem 0 0 1.55rem;
+}
+
+.archive-post-node > .archive-post-children::before {
+  position: absolute;
+  top: -0.08rem;
+  bottom: 1.08rem;
+  left: 0;
+  width: 1px;
+  background: color-mix(in srgb, var(--archive-rule) 76%, var(--archive-meta));
+  content: "";
+}
+
+.archive-post-children > .archive-post-node::before {
+  position: absolute;
+  top: 1.08rem;
+  left: -1.55rem;
+  width: 1.05rem;
+  border-top: 1px solid
+    color-mix(in srgb, var(--archive-rule) 76%, var(--archive-meta));
+  content: "";
+}
+
+.archive-post-children > .archive-post-node:last-child::after {
+  position: absolute;
+  z-index: 0;
+  top: calc(1.08rem + 1px);
+  bottom: 0;
+  left: -1.6rem;
+  width: 0.2rem;
+  background: var(--archive-paper);
+  content: "";
+}
+
+.archive-post-node > .archive-post,
+.archive-post-node > .archive-post-children {
+  z-index: 1;
+}
+
+/* 대화방형은 카드가 아닌 연속 로그를 유지한다. */
+.archive-body-chat .archive-thread {
+  border: 0;
+  padding: 0.25rem 0;
+}
+
+.archive-body-chat .archive-thread + .archive-thread {
+  margin-top: 0.3rem;
+}
+
+.archive-body-chat .archive-post {
+  display: block;
+  padding: 0.3rem 0;
+}
+
+.archive-body-chat .archive-post-author {
+  margin-right: 0.5rem;
+  font-weight: 500;
+}
+
 .archive-body-chat .archive-post-time {
   opacity: 0.65;
 }
 
 .archive-body-chat .archive-post-reply {
-  border-left-style: dotted;
+  padding-top: 0.3rem;
 }
 
-
-
-
-.archive-post-author {
-  font-family: var(--archive-mono);
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: var(--archive-ink, inherit);
-  opacity: 0.9;
+.archive-body-chat .archive-post-node > .archive-post-children::before,
+.archive-body-chat .archive-post-children > .archive-post-node::before {
+  background: transparent;
+  border-color: var(--archive-rule);
+  border-top-style: dotted;
 }
 
-.archive-post-head .archive-post-time {
-  font-size: 0.68rem;
-  opacity: 0.65;
-}
+@media (max-width: 520px) {
+  .archive-post {
+    padding: 0.24rem 0 0.4rem;
+  }
 
+  .archive-thread-gap {
+    margin-left: 0;
+  }
 
+  .archive-post-text {
+    font-size: 0.85rem;
+  }
 
-.archive-body-chat .archive-post-author {
-  font-weight: 500;
-}
+  .archive-post-node > .archive-post-children {
+    margin-left: 0.22rem;
+    padding-left: 1rem;
+  }
 
+  .archive-post-children > .archive-post-node::before {
+    left: -1rem;
+    width: 0.68rem;
+  }
 
-/* 스레드형 댓글 레이아웃 — 원글과 답글이 한 묶음으로 붙고,
-   묶음 사이에 간격과 경계선이 온다. 본문 왼쪽 정렬선은 작성자
-   이름 길이와 무관하게 일정하다. */
-.archive-thread {
-  padding: 0.55rem 0;
-}
-
-.archive-thread + .archive-thread {
-  border-top: 1px solid
-    color-mix(in srgb, var(--archive-rule, currentColor) 45%, transparent);
-}
-
-.archive-thread .archive-post + .archive-post {
-  margin-top: 0.5rem;
-}
-
-.archive-post-head {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  line-height: 1.3;
-}
-
-.archive-post-text {
-  margin-top: 0.15rem;
-  line-height: 1.62;
-}
-
-.archive-post-reply {
-  margin-left: 1.15rem;
-  padding-left: 0.85rem;
-  border-left: 2px solid var(--archive-rule, currentColor);
-}
-
-/* 대화방형 — 경계선 없이 로그처럼 흐르고, 답장 표시는 점선 */
-.archive-body-chat .archive-thread {
-  padding: 0.3rem 0;
-}
-
-.archive-body-chat .archive-thread + .archive-thread {
-  border-top: none;
-}
-
-.archive-body-chat .archive-post-reply {
-  border-left-style: dotted;
+  .archive-post-children > .archive-post-node:last-child::after {
+    left: -1.05rem;
+  }
 }
 
 
@@ -742,22 +888,4 @@ body.archive-site :focus-visible {
 
 .archive-notice-body {
   white-space: pre-line;
-}
-
-/* 게시글·대화 본문은 화면의 글 — 고딕 */
-.archive-post-text {
-  font-family: var(--archive-sans);
-}
-
-/* 호흡: 스레드·대화방 간격 */
-.archive-thread {
-  padding: 0.8rem 0;
-}
-
-.archive-body-chat .archive-thread {
-  padding: 0.5rem 0;
-}
-
-.archive-post-text {
-  line-height: 1.7;
 }
