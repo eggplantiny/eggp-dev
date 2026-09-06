@@ -2,6 +2,7 @@ import { readdir, readFile } from "node:fs/promises";
 import type { Dirent } from "node:fs";
 import path from "node:path";
 import type { ArchiveDocument, ArchivePart } from "./types";
+import { assertRetainedMedia, isRetainedMedia } from "./retained-media.mjs";
 
 const PUBLIC_ROOT = path.resolve(process.cwd(), "public", "30months");
 const CONTENT_ROOT = path.join(PUBLIC_ROOT, "content");
@@ -214,10 +215,13 @@ export async function loadArchiveDocuments(): Promise<ArchiveDocument[]> {
         `public/30months/m contains an invalid entry: ${entry.name}`,
       );
     }
-    if (!referencedMedia.has(entry.name)) {
+    if (!referencedMedia.has(entry.name) && !isRetainedMedia(entry.name)) {
       throw new Error(
         `public/30months/m contains unreferenced media: ${entry.name}`,
       );
+    }
+    if (isRetainedMedia(entry.name)) {
+      assertRetainedMedia(entry.name, await readFile(path.join(MEDIA_ROOT, entry.name)));
     }
     actualMedia.add(entry.name);
   }

@@ -13,6 +13,11 @@ import {
   rmSync,
 } from "node:fs";
 import path from "node:path";
+import {
+  RETAINED_MEDIA,
+  assertRetainedMedia,
+  isRetainedMedia,
+} from "../src/lib/thirty-months/retained-media.mjs";
 
 const CONTENT_FILE = /^(part-(0[1-9]|[12]\d|30)|epilogue)\.json$/;
 const MEDIA_FILE = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(?:jpe?g|png|webp)$/i;
@@ -397,6 +402,8 @@ function validateSource(sourceRoot) {
     assertRegularFile(file, `release/m/${entry.name}`);
     if (lstatSync(file).size > 25 * 1024 * 1024)
       fail(`release/m/${entry.name}: file exceeds 25 MiB`);
+    if (isRetainedMedia(entry.name))
+      assertRetainedMedia(entry.name, readFileSync(file));
     actualMedia.add(entry.name);
   }
   for (const name of referencedMedia) {
@@ -426,6 +433,20 @@ function importRelease(sourceArg) {
     fail("release source cannot be the public target");
   }
   const validated = validateSource(sourceRoot);
+  const retained = [];
+  const oldMediaRoot = path.join(TARGET_ROOT, "m");
+  if (existsSync(oldMediaRoot)) {
+    // Never follow a symlink or retain arbitrary unreferenced target files.
+    const oldNames = new Set(listDirectory(oldMediaRoot, "public/30months/m").map((entry) => entry.name));
+    for (const name of Object.keys(RETAINED_MEDIA)) {
+      if (!oldNames.has(name)) continue;
+      const file = path.join(oldMediaRoot, name);
+      assertRegularFile(file, `public/30months/m/${name}`);
+      assertRetainedMedia(name, readFileSync(file));
+      if (!validated.mediaEntries.some((entry) => entry.name === name))
+        retained.push({ name, file });
+    }
+  }
 
   mkdirSync(STAGING_PARENT, { recursive: true });
   mkdirSync(PUBLIC_PARENT, { recursive: true });
@@ -452,6 +473,11 @@ function importRelease(sourceArg) {
         path.join(stageRoot, "m", entry.name),
       );
     }
+    for (const { name, file } of retained) {
+      const destination = path.join(stageRoot, "m", name);
+      copyFileSync(file, destination);
+      assertRetainedMedia(name, readFileSync(destination));
+    }
 
     if (existsSync(TARGET_ROOT)) {
       renameSync(TARGET_ROOT, backupRoot);
@@ -471,7 +497,7 @@ function importRelease(sourceArg) {
   }
 
   process.stdout.write(
-    `Imported ${validated.contentEntries.length} approved episode(s) and ${validated.mediaEntries.length} media file(s) into public/30months.\n`,
+    `Imported ${validated.contentEntries.length} approved episode(s) and ${validated.mediaEntries.length} media file(s) into public/30months; preserved ${retained.length} hash-pinned published media file(s).\n`,
   );
 }
 
