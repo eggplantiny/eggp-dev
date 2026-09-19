@@ -50,6 +50,15 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Nanum+Pen+Script&display=swap"
     />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3H720QHEJS"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(...args) {
+        dataLayer.push(args);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-3H720QHEJS");
+    </script>
   </head>
   <body class="archive-site">
     <slot />
