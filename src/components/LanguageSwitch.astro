@@ -1,0 +1,74 @@
+---
+interface Props {
+  lang: string;
+  alternates: Array<{ lang: string; href: string }>;
+}
+const { lang, alternates } = Astro.props;
+const versions = ["ko", "en"].flatMap((locale) => {
+  const version = alternates.find((item) => item.lang.toLowerCase() === locale);
+  return version ? [{ ...version, lang: locale }] : [];
+});
+---
+
+{
+  versions.length > 1 && (
+    <nav
+      class="language-switch"
+      aria-label={lang === "ko" ? "언어 선택" : "Language"}
+    >
+      {versions.map((version) => (
+        <a
+          href={version.href}
+          lang={version.lang}
+          hreflang={version.lang}
+          aria-label={version.lang === "ko" ? "한국어" : "English"}
+          aria-current={lang === version.lang ? "page" : undefined}
+        >
+          {lang === version.lang && (
+            <span class="language-indicator" aria-hidden="true" />
+          )}
+          <span class="language-label">{version.lang.toUpperCase()}</span>
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+<style>
+  .language-switch {
+    display: flex;
+    flex: none;
+    align-items: center;
+    padding: 3px;
+    border: 1px solid var(--border, var(--archive-rule));
+    border-radius: 24px;
+    font: 11px var(--font-sans, var(--archive-sans, sans-serif));
+    letter-spacing: 0.02em;
+  }
+  .language-switch a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 38px;
+    color: var(--text-muted, var(--archive-ink-2));
+    text-decoration: none;
+  }
+  .language-switch a[aria-current] {
+    color: var(--text, var(--archive-ink));
+    font-weight: 600;
+  }
+  .language-indicator {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: var(--bg-sub, var(--archive-paper-2));
+    view-transition-name: language-indicator;
+  }
+  .language-label {
+    position: relative;
+  }
+  .language-switch a:hover {
+    color: var(--text, var(--archive-ink));
+  }
+</style>

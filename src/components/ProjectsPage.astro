@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { copy, sectionAlternates, type Locale } from "../lib/i18n";
+import "../styles/workshop.css";
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = copy[lang].projects;
+---
+
+<BaseLayout
+  title="Projects"
+  metaTitle={t.metaTitle}
+  description={t.description}
+  lang={lang}
+  alternates={sectionAlternates("projects")}
+>
+  <main class="page-shell collection-page" id="main-content">
+    <header class="collection-intro">
+      <h1 lang="en">Projects</h1>
+      <p>{t.intro}</p>
+    </header>
+
+    <article class="project-entry" aria-labelledby="conn-heading">
+      <div class="project-heading">
+        <h2 id="conn-heading">
+          <a href={t.url}>Conn <span aria-hidden="true">↗</span></a>
+        </h2>
+        <span class="project-category" lang="en">OPEN SOURCE · TERMINAL</span>
+      </div>
+      <p class="project-description">
+        {t.conn}
+      </p>
+      <p class="project-detail">
+        {t.detail}
+      </p>
+      <div class="project-links">
+        <a class="text-link" href={t.url}
+          >{t.cta} <span aria-hidden="true">↗</span></a
+        >
+        <a class="text-link" href="https://github.com/eggp-dev/conn"
+          >GitHub <span aria-hidden="true">↗</span></a
+        >
+      </div>
+      <figure class="project-preview">
+        <a href={t.url} aria-label={t.demo}>
+          <img
+            src="/projects/conn-handoff.png"
+            width="1920"
+            height="1080"
+            alt={t.image}
+          />
+        </a>
+        <figcaption>{t.caption}</figcaption>
+      </figure>
+    </article>
+  </main>
+</BaseLayout>

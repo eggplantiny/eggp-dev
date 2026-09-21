@@ -1,7 +1,10 @@
 ---
 import VercelAnalytics from "@vercel/analytics/astro";
 import SiteNav from "../components/SiteNav.astro";
+import LanguageSwitch from "../components/LanguageSwitch.astro";
+import { asLocale, sectionPaths } from "../lib/i18n";
 import "../styles/global.css";
+import "../styles/transitions.css";
 
 interface Props {
   title?: string;
@@ -96,8 +99,10 @@ const structuredData =
       }
     : {
         "@context": "https://schema.org",
-        "@type": Astro.url.pathname === "/" ? "WebSite" : "CollectionPage",
-        name: Astro.url.pathname === "/" ? siteName : title,
+        "@type": ["/", "/en/"].includes(Astro.url.pathname)
+          ? "WebSite"
+          : "CollectionPage",
+        name: ["/", "/en/"].includes(Astro.url.pathname) ? siteName : title,
         description: metaDescription,
         url: canonicalUrl,
         inLanguage: lang,
@@ -241,9 +246,14 @@ const structuredData =
     >
     <header class="site-header">
       <div class="page-shell site-header__inner">
-        <a href="/" class="site-title">eggp.</a>
+        <a
+          href={sectionPaths[asLocale(lang)].essays}
+          class="site-title"
+          data-site-logo>eggp.</a
+        >
+        <SiteNav lang={lang} />
         <div class="site-header__actions">
-          <SiteNav lang={lang} />
+          <LanguageSwitch lang={lang} alternates={alternates} />
           <button
             type="button"
             class="theme-toggle"
@@ -252,8 +262,31 @@ const structuredData =
               ? "밝은 화면과 어두운 화면 전환"
               : "Toggle color theme"}
           >
-            <span data-theme-label="dark">Dark</span>
-            <span data-theme-label="light">Light</span>
+            <svg
+              data-theme-label="dark"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              aria-hidden="true"
+              ><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"
+              ></path></svg
+            >
+            <svg
+              data-theme-label="light"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              aria-hidden="true"
+              ><circle cx="12" cy="12" r="4"></circle><path
+                d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"
+              ></path></svg
+            >
           </button>
         </div>
       </div>

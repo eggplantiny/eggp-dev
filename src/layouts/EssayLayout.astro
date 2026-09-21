@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import SubscribeForm from "../components/SubscribeForm.astro";
+import { asLocale, sectionPaths } from "../lib/i18n";
 
 interface Props {
   title: string;
@@ -39,6 +40,7 @@ const {
 } = Astro.props;
 
 const dateLocale = lang === "ko" ? "ko-KR" : "en-US";
+const indexHref = `${sectionPaths[asLocale(lang)].essays}#essays`;
 const formattedDate = new Intl.DateTimeFormat(dateLocale, {
   year: "numeric",
   month: "long",
@@ -66,7 +68,7 @@ const formattedDate = new Intl.DateTimeFormat(dateLocale, {
   }))}
 >
   <main class="page-shell essay-page" id="main-content">
-    <a href="/#essays" class="essay-backlink"
+    <a href={indexHref} class="essay-backlink"
       >{lang === "ko" ? "← 글 목록" : "← All essays"}</a
     >
 
@@ -113,7 +115,7 @@ const formattedDate = new Intl.DateTimeFormat(dateLocale, {
     </aside>
 
     <footer class="essay-footer">
-      <a href="/#essays" class="essay-backlink"
+      <a href={indexHref} class="essay-backlink"
         >{lang === "ko" ? "← 글 목록" : "← All essays"}</a
       >
     </footer>

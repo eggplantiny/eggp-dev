@@ -1,21 +1,31 @@
 ---
 import VercelAnalytics from "@vercel/analytics/astro";
 import "../styles/thirty-months.css";
+import "../styles/transitions.css";
 
 interface Props {
   title: string;
   description: string;
   noindex?: boolean;
   ogType?: "article" | "website";
+  lang?: "ko" | "en";
+  alternates?: Array<{ lang: string; href: string; default?: boolean }>;
 }
 
-const { title, description, noindex = false, ogType = "article" } = Astro.props;
+const {
+  title,
+  description,
+  noindex = false,
+  ogType = "article",
+  lang = "ko",
+  alternates = [],
+} = Astro.props;
 const siteUrl = Astro.site ?? new URL("https://eggp.dev");
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
 ---
 
 <!doctype html>
-<html lang="ko">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,12 +40,42 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
         : "index, follow, max-image-preview:large"}
     />
     <link rel="canonical" href={canonicalUrl} />
+    {
+      alternates.map((alternate) => (
+        <link
+          rel="alternate"
+          hreflang={alternate.lang}
+          href={new URL(alternate.href, siteUrl).toString()}
+        />
+      ))
+    }
+    {
+      alternates
+        .filter((alternate) => alternate.default)
+        .map((alternate) => (
+          <link
+            rel="alternate"
+            hreflang="x-default"
+            href={new URL(alternate.href, siteUrl).toString()}
+          />
+        ))
+    }
     <meta property="og:site_name" content="eggp." />
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:locale" content={lang === "ko" ? "ko_KR" : "en_US"} />
+    {
+      alternates
+        .filter((alternate) => alternate.lang !== lang)
+        .map((alternate) => (
+          <meta
+            property="og:locale:alternate"
+            content={alternate.lang === "ko" ? "ko_KR" : "en_US"}
+          />
+        ))
+    }
     <meta
       property="og:image"
       content={new URL("/icon.png", siteUrl).toString()}

@@ -10,6 +10,9 @@ const readPage = (route) =>
 const home = await readPage("");
 const projects = await readPage("projects");
 const novel = await readPage("30months");
+const englishHome = await readPage("en");
+const englishProjects = await readPage("en/projects");
+const englishFiction = await readPage("en/fiction");
 const contentFiles = (await readdir("public/30months/content")).filter((file) =>
   /^(part-\d{2}|epilogue)\.json$/.test(file),
 );
@@ -75,7 +78,10 @@ test("ordered page tabs identify the active section, including both essay langua
     [projects, "/projects/", "page"],
     [novel, "/30months/", "page"],
     [await readPage("essays/ko/compiling-a-novel"), "/", "location"],
-    [await readPage("essays/en/compiling-a-novel"), "/", "location"],
+    [await readPage("essays/en/compiling-a-novel"), "/en/", "location"],
+    [englishHome, "/en/", "page"],
+    [englishProjects, "/en/projects/", "page"],
+    [englishFiction, "/en/fiction/", "page"],
   ]) {
     const nav = html.match(
       /<nav\b[^>]*class="site-nav"[^>]*>([\s\S]*?)<\/nav>/,
@@ -88,7 +94,10 @@ test("ordered page tabs identify the active section, including both essay langua
     );
     assert.deepEqual(
       links.map((link) => link[1].match(/href="([^"]+)"/)[1]),
-      ["/", "/projects/", "/30months/"],
+      html.includes('lang="en" data-theme=') ||
+        html.includes('<html lang="en">')
+        ? ["/en/", "/en/projects/", "/en/fiction/"]
+        : ["/", "/projects/", "/30months/"],
     );
     const active = links.filter((link) => link[1].includes("aria-current="));
     assert.equal(active.length, 1);
@@ -140,6 +149,9 @@ test("GA Arguments queue, Vercel analytics, canonical URLs, and indexability sur
     "",
     "projects",
     "30months",
+    "en",
+    "en/projects",
+    "en/fiction",
     ...published.map((document) => `30months/part/${document.part}`),
     "essays/ko/compiling-a-novel",
     "essays/en/compiling-a-novel",
@@ -166,6 +178,9 @@ test("landing links, fragments, and preview image resolve in the built site", as
     ["/", home],
     ["/projects/", projects],
     ["/30months/", novel],
+    ["/en/", englishHome],
+    ["/en/projects/", englishProjects],
+    ["/en/fiction/", englishFiction],
   ]) {
     for (const match of html.matchAll(/<a\b[^>]*href="([^"]+)"/g)) {
       const url = new URL(match[1], `https://eggp.dev${route}`);
@@ -186,4 +201,120 @@ test("landing links, fragments, and preview image resolve in the built site", as
     assert.ok(!html.includes("og-default.png"));
   const icon = await readFile(path.join(output, "icon.png"));
   assert.ok(icon.readUInt32BE(16) >= 200 && icon.readUInt32BE(20) >= 200);
+});
+
+test("every bilingual page switches to its exact counterpart with reciprocal SEO alternates", async () => {
+  for (const [koRoute, enRoute] of [
+    ["", "en"],
+    ["projects", "en/projects"],
+    ["30months", "en/fiction"],
+    ["essays/ko/compiling-a-novel", "essays/en/compiling-a-novel"],
+    [
+      "essays/ko/superintelligence-in-my-hands",
+      "essays/en/superintelligence-in-my-hands",
+    ],
+  ]) {
+    const hrefs = [koRoute, enRoute].map(
+      (route) => `/${route ? `${route}/` : ""}`,
+    );
+    for (const [index, route] of [koRoute, enRoute].entries()) {
+      const html = await readPage(route);
+      const locale = index === 0 ? "ko" : "en";
+      assert.match(html, new RegExp(`<html[^>]+lang="${locale}"`));
+      const languageNav = html.match(
+        /<nav\b[^>]*class="language-switch"[^>]*>([\s\S]*?)<\/nav>/,
+      )?.[1];
+      assert.ok(languageNav, `global language switch: ${route}`);
+      for (const [versionIndex, version] of ["ko", "en"].entries()) {
+        assert.ok(languageNav.includes(`href="${hrefs[versionIndex]}"`));
+        assert.ok(
+          html.includes(
+            `hreflang="${version}" href="https://eggp.dev${hrefs[versionIndex]}"`,
+          ),
+        );
+      }
+      const active = [...languageNav.matchAll(/<a\b([^>]*)>/g)].filter(
+        (match) => match[1].includes('aria-current="page"'),
+      );
+      assert.equal(active.length, 1);
+      assert.ok(active[0][1].includes(`href="${hrefs[index]}"`));
+      assert.ok(
+        html.includes(
+          `property="og:locale" content="${locale === "ko" ? "ko_KR" : "en_US"}"`,
+        ),
+      );
+    }
+  }
+});
+
+test("English pages render actual English content and keep readers in their locale", async () => {
+  assert.match(englishHome, /Thinking and writing about AI/);
+  assert.match(englishHome, /Compiling a Novel/);
+  assert.match(englishHome, /Superintelligence in My Hands/);
+  assert.ok(!englishHome.includes("AI, 소프트웨어, 창작에 관해"));
+  assert.match(englishProjects, /A terminal you share with AI agents/);
+  assert.ok(englishProjects.includes('href="https://conn.eggp.dev/"'));
+  assert.match(englishFiction, /Novel text in Korean/);
+  assert.match(englishFiction, /Read in Korean/);
+  assert.match(englishFiction, /<h1>30 Months<\/h1>/);
+  for (const document of published)
+    assert.ok(
+      englishFiction.includes(`href="/30months/part/${document.part}/"`),
+    );
+  const essay = await readPage("essays/en/compiling-a-novel");
+  assert.ok(essay.includes('href="/en/#essays"'));
+  assert.ok(!essay.includes('href="/#essays"'));
+});
+
+test("native page motion and reduced-motion protection ship to both layouts", async () => {
+  for (const html of [
+    home,
+    englishHome,
+    projects,
+    englishProjects,
+    novel,
+    englishFiction,
+  ]) {
+    const stylesheets = [
+      ...html.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g),
+    ]
+      .map((match) => match[1])
+      .filter((href) => href.startsWith("/_astro/"));
+    const css =
+      [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)]
+        .map((match) => match[1])
+        .join("\n") +
+      (
+        await Promise.all(
+          stylesheets.map((href) => readFile(path.join(output, href), "utf8")),
+        )
+      ).join("\n");
+    assert.match(css, /@view-transition\s*\{\s*navigation:\s*auto/);
+    assert.match(css, /view-transition-name:\s*language-indicator/);
+    assert.match(css, /content-in/);
+    assert.match(css, /prefers-reduced-motion:\s*reduce/);
+    assert.match(css, /navigation:\s*none/);
+    assert.ok(
+      !css.includes("view-transition-name:site-navigation"),
+      "navigation must remain interactive during transitions",
+    );
+    assert.ok(
+      !html.includes("astro-view-transitions-enabled"),
+      "native navigation must retain per-document GA semantics",
+    );
+  }
+});
+
+test("all localized landing pages are discoverable in the sitemap", async () => {
+  const sitemap = await readFile(path.join(output, "sitemap-0.xml"), "utf8");
+  for (const route of [
+    "/",
+    "/en/",
+    "/projects/",
+    "/en/projects/",
+    "/30months/",
+    "/en/fiction/",
+  ]) {
+    assert.ok(sitemap.includes(`<loc>https://eggp.dev${route}</loc>`));
+  }
 });

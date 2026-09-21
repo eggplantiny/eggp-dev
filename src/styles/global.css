@@ -117,14 +117,19 @@ button {
 .site-header__actions {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 12px;
 }
 
 .site-header__inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 28px;
+}
+
+.site-header__inner > .site-nav {
+  justify-self: end;
 }
 
 .site-title {
@@ -838,6 +843,19 @@ button {
       :where([class~="not-prose"], [class~="not-prose"] *)
     ) {
     font-size: 17px;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-header__inner {
+    grid-template-columns: 1fr auto;
+    gap: 4px 12px;
+  }
+  .site-header__inner > .site-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: start;
+    gap: 24px;
   }
 }
 

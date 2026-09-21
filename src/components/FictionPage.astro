@@ -1,0 +1,158 @@
+---
+import ThirtyMonthsLayout from "../layouts/ThirtyMonthsLayout.astro";
+import SiteNav from "./SiteNav.astro";
+import LanguageSwitch from "./LanguageSwitch.astro";
+import {
+  copy,
+  sectionPaths,
+  sectionAlternates,
+  type Locale,
+} from "../lib/i18n";
+import { loadArchiveDocuments } from "../lib/thirty-months/content";
+import { previewArchiveDocument } from "../lib/thirty-months/preview";
+import { partLabel, partSlug } from "../lib/thirty-months/types";
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = copy[lang].fiction;
+const alternates = sectionAlternates("fiction");
+
+const published = await loadArchiveDocuments();
+const previewOnly = import.meta.env.DEV && published.length === 0;
+const documents = previewOnly ? [previewArchiveDocument] : published;
+const partCount = published.filter(
+  (document) => typeof document.part === "number",
+).length;
+const hasEpilogue = published.some((document) => document.part === "epilogue");
+const complete = partCount === 30 && hasEpilogue;
+const firstPart = documents[0];
+const description = t.description;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWorkSeries",
+  name: t.title,
+  alternateName: "The Last Dependency",
+  description,
+  url: `https://eggp.dev${sectionPaths[lang].fiction}`,
+  inLanguage: "ko",
+  author: { "@type": "Person", name: "eggplantiny", url: "https://eggp.dev/" },
+  hasPart: published.map((document) => ({
+    "@type": "CreativeWork",
+    name: `30개월 — ${partLabel(document.part)}`,
+    url: `https://eggp.dev/30months/part/${partSlug(document.part)}/`,
+  })),
+};
+---
+
+<ThirtyMonthsLayout
+  title={`${t.title} / The Last Dependency`}
+  description={description}
+  noindex={previewOnly}
+  ogType="website"
+  lang={lang}
+  alternates={alternates}
+>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(schema)}
+  />
+  <a href="#main-content" class="archive-skip-link"
+    >{lang === "ko" ? "본문으로 건너뛰기" : "Skip to content"}</a
+  >
+  <header class="archive-topbar archive-index-topbar">
+    <a
+      href={sectionPaths[lang].essays}
+      aria-label={lang === "ko" ? "eggp. 작업실 홈" : "eggp. home"}
+      data-site-logo>EGGP.</a
+    >
+    <SiteNav lang={lang} />
+    <LanguageSwitch lang={lang} alternates={alternates} />
+  </header>
+  <main class="archive-main archive-index" id="main-content">
+    <header class="archive-parthead archive-index-head">
+      <div class="archive-series" lang="en">THE LAST DEPENDENCY</div>
+      <h1>{t.title}</h1>
+      <p class="archive-intro-hook">{t.hook[0]}<br />{t.hook[1]}</p>
+      <p class="archive-index-description">{description}</p>
+      <p class="archive-publication-meta">
+        {previewOnly ? t.preview : complete ? t.complete : t.ongoing} · {
+          partCount
+        }{lang === "ko" ? "회" : " parts"}{
+          hasEpilogue ? (lang === "ko" ? " + 에필로그" : " + epilogue") : ""
+        } · {t.language}
+      </p>
+      <div class="archive-intro-actions">
+        {
+          firstPart && (
+            <a
+              class="archive-start-link"
+              href={`/30months/part/${partSlug(firstPart.part)}/`}
+            >
+              {t.start} <span aria-hidden="true">→</span>
+            </a>
+          )
+        }
+        <a href="#contents">{t.contentsLink}</a>
+      </div>
+    </header>
+
+    <section
+      class="archive-contents"
+      id="contents"
+      aria-labelledby="contents-heading"
+    >
+      <div class="archive-contents-heading">
+        <h2 id="contents-heading">{t.contents}</h2>
+        <span lang="en">ARCHIVE INDEX</span>
+      </div>
+      {
+        documents.length > 0 ? (
+          <ol class="archive-part-list">
+            {documents.map((document) => (
+              <li>
+                <a href={`/30months/part/${partSlug(document.part)}/`}>
+                  <span class="archive-part-list-label">
+                    {partLabel(document.part)}
+                  </span>
+                  <span class="archive-part-list-period">
+                    {document.period}
+                  </span>
+                  <span class="archive-part-list-range">
+                    {document.range.from} – {document.range.to}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p class="archive-empty">{t.empty}</p>
+        )
+      }
+    </section>
+
+    {previewOnly && <p class="archive-preview-note">{t.previewNote}</p>}
+
+    <aside class="archive-making-of">
+      <span>{t.making}</span>
+      <a href={`/essays/${lang}/compiling-a-novel/`}
+        >{t.essay} <span aria-hidden="true">→</span></a
+      >
+    </aside>
+
+    <section class="archive-guide" id="notice">
+      <h2>{t.notice}</h2>
+      <p>{t.guideIntro}</p>
+      <ol>
+        {t.rules.map((rule) => <li>{rule}</li>)}
+      </ol>
+      <p>{t.numbering}</p>
+      <p>{t.pseudonyms}</p>
+    </section>
+    <footer class="archive-workshop-link">
+      <a href={sectionPaths[lang].essays}>{t.back}</a>
+    </footer>
+  </main>
+</ThirtyMonthsLayout>

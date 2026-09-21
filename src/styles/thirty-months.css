@@ -563,7 +563,30 @@ body.archive-site :focus-visible {
 }
 
 .archive-index-topbar {
-  height: 3.25rem;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 28px;
+  height: 3.75rem;
+}
+
+@media (max-width: 560px) {
+  .archive-index-topbar {
+    grid-template-columns: 1fr auto;
+    height: auto;
+    gap: 0 12px;
+    padding-top: 6px;
+  }
+  .archive-index-topbar > .site-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .archive-index {
+    padding-top: 6.5rem;
+  }
+  .archive-index .archive-contents,
+  .archive-index .archive-guide {
+    scroll-margin-top: 7rem;
+  }
 }
 .archive-skip-link {
   position: fixed;

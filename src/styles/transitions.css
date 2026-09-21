@@ -1,0 +1,70 @@
+/* Native multi-page transitions keep real URLs, history, and per-document GA. */
+@view-transition {
+  navigation: auto;
+}
+
+:root {
+  view-transition-name: none;
+}
+#main-content {
+  view-transition-name: page-content;
+}
+.site-footer {
+  view-transition-name: site-footer;
+}
+
+/* Keep the real controls clickable while their snapshots animate above them. */
+::view-transition,
+::view-transition-group(*),
+::view-transition-image-pair(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  pointer-events: none;
+}
+
+::view-transition-group(*) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-old(page-content) {
+  animation: content-out 140ms ease-in both;
+}
+::view-transition-new(page-content) {
+  animation: content-in 260ms 60ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+::view-transition-group(page-content) {
+  height: 100%;
+  overflow: clip;
+}
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
+  height: auto;
+}
+
+@keyframes content-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes content-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

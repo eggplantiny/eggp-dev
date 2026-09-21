@@ -1,0 +1,102 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { copy, sectionAlternates, type Locale } from "../lib/i18n";
+import "../styles/workshop.css";
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = copy[lang].essays;
+
+const essays = (await getCollection("essays", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const stems = [
+  ...new Set(essays.map((essay) => essay.id.split("/").slice(1).join("/"))),
+];
+const groupedEssays = stems.map((stem) => {
+  const versions = essays.filter(
+    (essay) => essay.id.split("/").slice(1).join("/") === stem,
+  );
+  const primary =
+    versions.find((essay) => essay.id.startsWith(`${lang}/`)) ?? versions[0];
+  return { primary, versions };
+});
+const formatted = new Intl.DateTimeFormat(lang === "ko" ? "ko-KR" : "en-US", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+---
+
+<BaseLayout
+  title="Essays"
+  metaTitle={t.metaTitle}
+  description={t.description}
+  lang={lang}
+  alternates={sectionAlternates("essays")}
+>
+  <main class="page-shell collection-page" id="main-content">
+    <section id="essays" aria-labelledby="essays-heading">
+      <header class="collection-intro">
+        <h1 id="essays-heading" lang="en">Essays</h1>
+        <p>{t.intro}</p>
+      </header>
+
+      <ul class="writing-list">
+        {
+          groupedEssays.map(({ primary, versions }) => (
+            <li>
+              <article>
+                <h2>
+                  <a
+                    href={`/essays/${primary.id}/`}
+                    lang={primary.id.split("/")[0]}
+                  >
+                    {primary.data.title}
+                  </a>
+                </h2>
+                <p class="writing-summary" lang={primary.id.split("/")[0]}>
+                  {primary.data.subtitle ?? primary.data.description}
+                </p>
+                <div class="writing-meta">
+                  <time datetime={primary.data.date.toISOString()}>
+                    {formatted.format(primary.data.date)}
+                  </time>
+                  <nav
+                    class="writing-languages"
+                    aria-label={
+                      lang === "ko"
+                        ? `${primary.data.title} 읽기 언어`
+                        : `Languages for ${primary.data.title}`
+                    }
+                  >
+                    {["ko", "en"].map((locale) => {
+                      const version = versions.find((essay) =>
+                        essay.id.startsWith(`${locale}/`),
+                      );
+                      return (
+                        version && (
+                          <a
+                            href={`/essays/${version.id}/`}
+                            lang={locale}
+                            hreflang={locale}
+                          >
+                            {locale === "ko" ? "한국어" : "English"}
+                          </a>
+                        )
+                      );
+                    })}
+                  </nav>
+                </div>
+              </article>
+            </li>
+          ))
+        }
+      </ul>
+      {groupedEssays.length === 0 && <p class="collection-empty">{t.empty}</p>}
+    </section>
+  </main>
+</BaseLayout>
