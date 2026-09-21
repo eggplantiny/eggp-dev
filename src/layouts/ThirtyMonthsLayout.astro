@@ -6,9 +6,10 @@ interface Props {
   title: string;
   description: string;
   noindex?: boolean;
+  ogType?: "article" | "website";
 }
 
-const { title, description, noindex = false } = Astro.props;
+const { title, description, noindex = false, ogType = "article" } = Astro.props;
 const siteUrl = Astro.site ?? new URL("https://eggp.dev");
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
 ---
@@ -30,14 +31,23 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
     />
     <link rel="canonical" href={canonicalUrl} />
     <meta property="og:site_name" content="eggp." />
-    <meta property="og:type" content="article" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:locale" content="ko_KR" />
+    <meta
+      property="og:image"
+      content={new URL("/icon.png", siteUrl).toString()}
+    />
+    <meta property="og:image:alt" content="eggp. — eggplantiny" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta
+      name="twitter:image"
+      content={new URL("/icon.png", siteUrl).toString()}
+    />
     <meta name="theme-color" content="#E6E7E3" />
     <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -50,7 +60,8 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Nanum+Pen+Script&display=swap"
     />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3H720QHEJS"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3H720QHEJS"
+    ></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -60,6 +71,7 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
       gtag("js", new Date());
       gtag("config", "G-3H720QHEJS");
     </script>
+    <slot name="head" />
   </head>
   <body class="archive-site">
     <slot />

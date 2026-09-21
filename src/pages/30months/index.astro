@@ -1,5 +1,6 @@
 ---
 import ThirtyMonthsLayout from "../../layouts/ThirtyMonthsLayout.astro";
+import SiteNav from "../../components/SiteNav.astro";
 import { loadArchiveDocuments } from "../../lib/thirty-months/content";
 import { previewArchiveDocument } from "../../lib/thirty-months/preview";
 import { partLabel, partSlug } from "../../lib/thirty-months/types";
@@ -7,46 +8,106 @@ import { partLabel, partSlug } from "../../lib/thirty-months/types";
 const published = await loadArchiveDocuments();
 const previewOnly = import.meta.env.DEV && published.length === 0;
 const documents = previewOnly ? [previewArchiveDocument] : published;
+const partCount = published.filter(
+  (document) => typeof document.part === "number",
+).length;
+const hasEpilogue = published.some((document) => document.part === "epilogue");
+const complete = partCount === 30 && hasEpilogue;
+const firstPart = documents[0];
+const description =
+  "어떤 재난 이후의 시간을, 남겨진 기록으로 따라가는 소설. 방송, 공고문, 게시판, 장부와 인터뷰 사이에서 독자가 이야기를 이어 붙입니다.";
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWorkSeries",
+  name: "30개월",
+  alternateName: "The Last Dependency",
+  description,
+  url: "https://eggp.dev/30months/",
+  inLanguage: "ko",
+  author: { "@type": "Person", name: "eggplantiny", url: "https://eggp.dev/" },
+  hasPart: published.map((document) => ({
+    "@type": "CreativeWork",
+    name: `30개월 — ${partLabel(document.part)}`,
+    url: `https://eggp.dev/30months/part/${partSlug(document.part)}/`,
+  })),
+};
 ---
 
 <ThirtyMonthsLayout
   title="30개월 / The Last Dependency"
-  description="자료 번호순으로 읽는 기록 소설 30개월 / The Last Dependency"
+  description={description}
   noindex={previewOnly}
+  ogType="website"
 >
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(schema)}
+  />
+  <a href="#main-content" class="archive-skip-link">본문으로 건너뛰기</a>
   <header class="archive-topbar archive-index-topbar">
-    <a href="/">EGGP.</a>
-    <b>INDEX</b>
+    <a href="/" aria-label="eggp. 작업실 홈">EGGP.</a>
+    <SiteNav />
   </header>
-  <main class="archive-main archive-index">
+  <main class="archive-main archive-index" id="main-content">
     <header class="archive-parthead archive-index-head">
-      <div class="archive-series">30개월 / THE LAST DEPENDENCY</div>
-      <h1>ARCHIVE</h1>
-      <p class="archive-index-description">자료 번호순으로 읽는 기록 소설</p>
-      <hr />
+      <div class="archive-series" lang="en">THE LAST DEPENDENCY</div>
+      <h1>30개월</h1>
+      <p class="archive-intro-hook">이야기는 끝났다.<br />기록은 남았다.</p>
+      <p class="archive-index-description">{description}</p>
+      <p class="archive-publication-meta">
+        {previewOnly ? "개발용 미리보기" : complete ? "완결" : "연재"} · {
+          partCount
+        }회{hasEpilogue ? " + 에필로그" : ""} · 한국어
+      </p>
+      <div class="archive-intro-actions">
+        {
+          firstPart && (
+            <a
+              class="archive-start-link"
+              href={`/30months/part/${partSlug(firstPart.part)}/`}
+            >
+              처음부터 읽기 <span aria-hidden="true">→</span>
+            </a>
+          )
+        }
+        <a href="#contents">목차 보기</a>
+      </div>
     </header>
 
-    {
-      documents.length > 0 ? (
-        <ol class="archive-part-list">
-          {documents.map((document) => (
-            <li>
-              <a href={`/30months/part/${partSlug(document.part)}/`}>
-                <span class="archive-part-list-label">
-                  {partLabel(document.part)}
-                </span>
-                <span class="archive-part-list-period">{document.period}</span>
-                <span class="archive-part-list-range">
-                  {document.range.from} – {document.range.to}
-                </span>
-              </a>
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <p class="archive-empty">아직 공개된 기록이 없습니다.</p>
-      )
-    }
+    <section
+      class="archive-contents"
+      id="contents"
+      aria-labelledby="contents-heading"
+    >
+      <div class="archive-contents-heading">
+        <h2 id="contents-heading">목차</h2>
+        <span lang="en">ARCHIVE INDEX</span>
+      </div>
+      {
+        documents.length > 0 ? (
+          <ol class="archive-part-list">
+            {documents.map((document) => (
+              <li>
+                <a href={`/30months/part/${partSlug(document.part)}/`}>
+                  <span class="archive-part-list-label">
+                    {partLabel(document.part)}
+                  </span>
+                  <span class="archive-part-list-period">
+                    {document.period}
+                  </span>
+                  <span class="archive-part-list-range">
+                    {document.range.from} – {document.range.to}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p class="archive-empty">아직 공개된 기록이 없습니다.</p>
+        )
+      }
+    </section>
 
     {
       previewOnly && (
@@ -56,26 +117,40 @@ const documents = previewOnly ? [previewArchiveDocument] : published;
       )
     }
 
+    <aside class="archive-making-of">
+      <span>이 소설을 만든 과정이 궁금하다면</span>
+      <a href="/essays/ko/compiling-a-novel/"
+        >소설을 컴파일하다 <span aria-hidden="true">→</span></a
+      >
+    </aside>
+
     <section class="archive-guide" id="notice">
       <h2>일러두기</h2>
       <p>이 보존본의 자료는 다음 원칙으로 배열한다.</p>
       <ol>
         <li>자료는 사건 시점 순으로 배열한다.</li>
-        <li>같은 시점 안에서는 자료 유형, 원문 시각, 보존 번호 순으로 배열한다.</li>
         <li>
-          인터뷰는 증언이 가리키는 시점에 배열한다. 여러 시점에 걸친 증언은
-          기록 시점에 배열한다.
+          같은 시점 안에서는 자료 유형, 원문 시각, 보존 번호 순으로 배열한다.
         </li>
-        <li>지연 수신 자료는 수집 시점에 배열한다. 기록 시점은 머리말에만 남긴다.</li>
+        <li>
+          인터뷰는 증언이 가리키는 시점에 배열한다. 여러 시점에 걸친 증언은 기록
+          시점에 배열한다.
+        </li>
+        <li>
+          지연 수신 자료는 수집 시점에 배열한다. 기록 시점은 머리말에만 남긴다.
+        </li>
       </ol>
       <p>
         보존 번호는 위 배열에 따라 부여한 일련번호다. 수집 순서, 중요도, 인물,
         자료 유형과 무관하다.
       </p>
       <p>
-        웹·대화 자료의 작성자 표기는 수집 시 자료별 치환 가명으로 대체한
-        것이다. 자료가 다르면 같은 가명이라도 같은 사람을 뜻하지 않는다.
+        웹·대화 자료의 작성자 표기는 수집 시 자료별 치환 가명으로 대체한 것이다.
+        자료가 다르면 같은 가명이라도 같은 사람을 뜻하지 않는다.
       </p>
     </section>
+    <footer class="archive-workshop-link">
+      <a href="/">← eggp. 작업실로</a>
+    </footer>
   </main>
 </ThirtyMonthsLayout>

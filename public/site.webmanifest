@@ -1,6 +1,7 @@
 {
-  "name": "Essays",
-  "short_name": "Essays",
+  "name": "eggp. — 개인 작업실",
+  "short_name": "eggp.",
+  "description": "a place where i make what i want to make.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#faf9f7",

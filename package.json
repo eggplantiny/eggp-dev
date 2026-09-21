@@ -15,7 +15,8 @@
     "import:30months": "node scripts/import-30months-release.mjs",
     "test:guard": "node --test scripts/check-private-leaks.test.mjs",
     "test:30months": "node --test scripts/import-30months-release.test.mjs",
-    "verify": "pnpm test:guard && pnpm test:30months && pnpm lint && pnpm build",
+    "test:workshop": "node --test scripts/workshop.test.mjs",
+    "verify": "pnpm test:guard && pnpm test:30months && pnpm lint && pnpm build && pnpm test:workshop",
     "test:email": "node scripts/send-test-email.mjs"
   },
   "dependencies": {

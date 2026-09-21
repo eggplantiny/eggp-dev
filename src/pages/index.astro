@@ -1,95 +1,202 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { loadArchiveDocuments } from "../lib/thirty-months/content";
+import "../styles/workshop.css";
 
-const entryPath = (entry: { id: string; slug?: string }) => entry.slug ?? entry.id;
-const entryLocale = (entry: { id: string; slug?: string }) => entryPath(entry).split('/')[0] ?? 'en';
-const entryStem = (entry: { id: string; slug?: string }) => entryPath(entry).split('/').slice(1).join('/');
-
-const localePriority = (path: string) => {
-  const locale = path.split('/')[0];
-  if (locale === 'en') return 0;
-  if (locale === 'ko') return 1;
-  return 2;
-};
-
-const essays = (await getCollection('essays', ({ data }) => !data.draft)).sort((a, b) => {
-  const localeDelta = localePriority(entryPath(a)) - localePriority(entryPath(b));
-  if (localeDelta !== 0) return localeDelta;
-  return b.data.date.valueOf() - a.data.date.valueOf();
-});
-
-const groupedEssays = Array.from(
-  essays.reduce((map, essay) => {
-    const key = entryStem(essay);
-    const current = map.get(key) ?? [];
-    current.push(essay);
-    map.set(key, current);
-    return map;
-  }, new Map())
-).map(([, versions]) => {
-  const orderedVersions = [...versions].sort(
-    (a, b) => localePriority(entryPath(a)) - localePriority(entryPath(b))
+const essays = (await getCollection("essays", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const stems = [
+  ...new Set(essays.map((essay) => essay.id.split("/").slice(1).join("/"))),
+];
+const groupedEssays = stems.map((stem) => {
+  const versions = essays.filter(
+    (essay) => essay.id.split("/").slice(1).join("/") === stem,
   );
-  const primary = orderedVersions[0];
-  const primaryLocale = entryLocale(primary);
-
-  return {
-    primary,
-    versions: orderedVersions.map((essay) => ({
-      lang: entryLocale(essay).toUpperCase(),
-      href: `/essays/${entryPath(essay)}/`,
-      active: entryLocale(essay) === primaryLocale,
-    })),
-  };
+  const primary =
+    versions.find((essay) => essay.id.startsWith("ko/")) ?? versions[0];
+  return { primary, versions };
 });
-
-const formatted = new Intl.DateTimeFormat('en-US', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
+const formatted = new Intl.DateTimeFormat("ko-KR", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
 });
+const published = await loadArchiveDocuments();
+const partCount = published.filter(
+  (document) => typeof document.part === "number",
+).length;
+const hasEpilogue = published.some((document) => document.part === "epilogue");
+const complete = partCount === 30 && hasEpilogue;
 ---
 
 <BaseLayout
-  title="eggp."
-  description="Bilingual essays on AI, software, research, and thought by eggplantiny."
-  metaTitle="Essays on AI, Software, and Research"
-  metaDescription="Bilingual essays on AI, software, research, and thought by eggplantiny."
-  keywords={['AI essays', 'software engineering', 'research', 'bilingual essays', 'eggplantiny']}
-  lang="en"
+  title="eggp. — 개인 작업실"
+  metaTitle="만들고 싶은 것을 만드는 곳"
+  description="만들고 싶은 것을 만드는 eggplantiny의 개인 작업실. AI 에이전트와 함께 쓰는 터미널 Conn, 기록 소설 30개월, 그리고 만들며 남긴 글을 모읍니다."
+  lang="ko"
+  wide
 >
-  <main class="page-shell index-page">
-    <section class="index-intro">
-      <p class="index-label">Personal Essays</p>
-      <h1 class="index-title">eggp.</h1>
-      <p class="index-description">Bilingual essays on AI, software, research, and thought.</p>
-    </section>
+  <main class="page-shell workshop-shell workshop" id="main-content">
+    <header class="workshop-intro">
+      <p class="workshop-eyebrow">EGGPLANTINY’S WORKSHOP</p>
+      <h1 lang="en">
+        a place where i make<br class="workshop-title-break" /> what i want to make.
+      </h1>
+      <div class="workshop-intro-bottom">
+        <p>
+          쓰고 싶은 도구를 만들고, 읽고 싶은 이야기를 씁니다.<br />그 과정에서
+          떠오른 생각도 이곳에 남깁니다.
+        </p>
+        <a
+          class="text-link workshop-about-link"
+          href="https://github.com/eggp-dev"
+          >eggp-dev on GitHub <span aria-hidden="true">↗</span></a
+        >
+      </div>
+    </header>
 
-    <ul class="essay-index-list">
-      {groupedEssays.map(({ primary, versions }) => (
-        <li class="essay-index-item">
-          <div class="essay-index-entry">
-            <div class="essay-index-locales" aria-label="Available essay languages">
-              {versions.map((version) => (
+    <div class="workshop-works">
+      <section
+        class="workshop-project"
+        id="projects"
+        aria-labelledby="project-heading"
+      >
+        <div class="workshop-section-label">
+          <span>01 / 프로젝트</span><span lang="en">SOFTWARE</span>
+        </div>
+        <h2 id="project-heading">
+          <a href="https://conn.eggp.dev/ko/"
+            >Conn <span aria-hidden="true">↗</span></a>
+        </h2>
+        <p class="workshop-work-description">
+          AI 에이전트와 함께 쓰는 터미널.<br />같은 화면에서 일하고, 제어권은 내
+          손에.
+        </p>
+        <figure class="workshop-project-preview">
+          <a
+            href="https://conn.eggp.dev/ko/"
+            aria-label="Conn 소개와 사용 데모 보기"
+          >
+            <img
+              src="/projects/conn-handoff.png"
+              width="1920"
+              height="1080"
+              alt="Codex CLI와 Conn이 같은 작업을 이어가는 실제 터미널 화면"
+            />
+          </a>
+          <figcaption>Codex CLI + Conn · 실제 협업 화면</figcaption>
+        </figure>
+        <div class="workshop-work-links">
+          <a class="text-link" href="https://conn.eggp.dev/ko/"
+            >Conn 알아보기 <span aria-hidden="true">↗</span></a
+          >
+          <a
+            class="text-link text-link--secondary"
+            href="https://github.com/eggp-dev/conn"
+            >GitHub <span aria-hidden="true">↗</span></a
+          >
+        </div>
+      </section>
+
+      <section
+        class="workshop-fiction"
+        id="fiction"
+        aria-labelledby="fiction-heading"
+      >
+        <div class="workshop-section-label">
+          <span>02 / 소설</span><span lang="en">FICTION</span>
+        </div>
+        <div class="workshop-fiction-body">
+          <p class="workshop-fiction-subtitle" lang="en">THE LAST DEPENDENCY</p>
+          <h2 id="fiction-heading"><a href="/30months/">30개월</a></h2>
+          <p class="workshop-fiction-hook">
+            이야기는 끝났다.<br />기록은 남았다.
+          </p>
+          <p class="workshop-work-description">
+            어떤 재난 이후의 시간을, 남겨진 기록으로 따라가는 소설. 방송,
+            공고문, 게시판과 장부 사이에서 이야기를 이어 붙입니다.
+          </p>
+          <p class="workshop-fiction-meta">
+            {complete ? "완결" : "연재"} · {partCount}회{
+              hasEpilogue ? " + 에필로그" : ""
+            } · 한국어
+          </p>
+          <div class="workshop-work-links">
+            <a class="text-link" href="/30months/"
+              >소설 만나보기 <span aria-hidden="true">→</span></a
+            >
+            {
+              published.some((document) => document.part === 1) && (
                 <a
-                  href={version.href}
-                  class:list={['essay-index-locale', version.active && 'is-active']}
+                  class="text-link text-link--secondary"
+                  href="/30months/part/1/"
                 >
-                  {version.lang}
+                  바로 읽기
                 </a>
-              ))}
-            </div>
-
-            <a href={`/essays/${entryPath(primary)}/`} class="essay-index-link">
-              <h2 class="essay-index-title-text">{primary.data.title}</h2>
-              {primary.data.subtitle && <p class="essay-index-subtitle">{primary.data.subtitle}</p>}
-              <p class="essay-index-date">{formatted.format(primary.data.date)}</p>
-              <p class="essay-index-description-text">{primary.data.description}</p>
-            </a>
+              )
+            }
           </div>
-        </li>
-      ))}
-    </ul>
+        </div>
+      </section>
+    </div>
+
+    <section
+      class="workshop-essays"
+      id="essays"
+      aria-labelledby="essays-heading"
+    >
+      <div class="workshop-section-label">
+        <span>03 / 글</span><span lang="en">ESSAYS</span>
+      </div>
+      <div class="workshop-essays-heading">
+        <h2 id="essays-heading">만들며 남긴 생각들</h2>
+        <p>AI, 소프트웨어, 창작에 관하여. <span lang="en">KO / EN</span></p>
+      </div>
+      <ul class="workshop-essay-list">
+        {
+          groupedEssays.map(({ primary, versions }) => (
+            <li>
+              <time datetime={primary.data.date.toISOString()}>
+                {formatted.format(primary.data.date)}
+              </time>
+              <div class="workshop-essay-copy">
+                <h3>
+                  <a
+                    href={`/essays/${primary.id}/`}
+                    lang={primary.id.split("/")[0]}
+                  >
+                    {primary.data.title}
+                  </a>
+                </h3>
+                <p>{primary.data.description}</p>
+              </div>
+              <nav
+                class="workshop-essay-languages"
+                aria-label={`${primary.data.title} 읽기 언어`}
+              >
+                {["ko", "en"].map((locale) => {
+                  const version = versions.find((essay) =>
+                    essay.id.startsWith(`${locale}/`),
+                  );
+                  return (
+                    version && (
+                      <a
+                        href={`/essays/${version.id}/`}
+                        lang={locale}
+                        hreflang={locale}
+                      >
+                        {locale === "ko" ? "한국어" : "English"}
+                      </a>
+                    )
+                  );
+                })}
+              </nav>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
   </main>
 </BaseLayout>

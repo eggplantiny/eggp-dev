@@ -1,6 +1,6 @@
 ---
-import BaseLayout from './BaseLayout.astro';
-import SubscribeForm from '../components/SubscribeForm.astro';
+import BaseLayout from "./BaseLayout.astro";
+import SubscribeForm from "../components/SubscribeForm.astro";
 
 interface Props {
   title: string;
@@ -32,17 +32,17 @@ const {
   ogImage,
   ogImageAlt,
   draft = false,
-  lang = 'en',
+  lang = "en",
   tags = [],
   keywords = [],
   alternateVersions = [],
 } = Astro.props;
 
-const dateLocale = lang === 'ko' ? 'ko-KR' : 'en-US';
+const dateLocale = lang === "ko" ? "ko-KR" : "en-US";
 const formattedDate = new Intl.DateTimeFormat(dateLocale, {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
+  year: "numeric",
+  month: "long",
+  day: "numeric",
 }).format(date);
 ---
 
@@ -62,27 +62,37 @@ const formattedDate = new Intl.DateTimeFormat(dateLocale, {
   alternates={alternateVersions.map((version) => ({
     lang: version.lang.toLowerCase(),
     href: version.href,
-    default: version.lang.toLowerCase() === 'en',
+    default: version.lang.toLowerCase() === "en",
   }))}
 >
-  <main class="page-shell essay-page">
-    <a href="/" class="essay-backlink">← eggp.</a>
+  <main class="page-shell essay-page" id="main-content">
+    <a href="/#essays" class="essay-backlink"
+      >{lang === "ko" ? "← 글 목록" : "← All essays"}</a
+    >
 
     <article class="essay-article">
       <header class="essay-header">
-        {alternateVersions.length > 1 && (
-          <nav class="essay-locale-switch" aria-label="Essay language versions">
-            {alternateVersions.map((version) => (
-              <a
-                href={version.href}
-                aria-current={version.active ? 'page' : undefined}
-                class:list={['essay-locale-link', version.active && 'is-active']}
-              >
-                {version.lang}
-              </a>
-            ))}
-          </nav>
-        )}
+        {
+          alternateVersions.length > 1 && (
+            <nav
+              class="essay-locale-switch"
+              aria-label="Essay language versions"
+            >
+              {alternateVersions.map((version) => (
+                <a
+                  href={version.href}
+                  aria-current={version.active ? "page" : undefined}
+                  class:list={[
+                    "essay-locale-link",
+                    version.active && "is-active",
+                  ]}
+                >
+                  {version.lang}
+                </a>
+              ))}
+            </nav>
+          )
+        }
 
         <h1 class="essay-title">{title}</h1>
         {subtitle && <p class="essay-subtitle">{subtitle}</p>}
@@ -95,12 +105,17 @@ const formattedDate = new Intl.DateTimeFormat(dateLocale, {
       </div>
     </article>
 
-    <aside class="essay-subscribe" aria-label={lang === 'ko' ? '뉴스레터 구독' : 'Newsletter subscription'}>
+    <aside
+      class="essay-subscribe"
+      aria-label={lang === "ko" ? "뉴스레터 구독" : "Newsletter subscription"}
+    >
       <SubscribeForm lang={lang} />
     </aside>
 
     <footer class="essay-footer">
-      <a href="/" class="essay-backlink">← eggp.</a>
+      <a href="/#essays" class="essay-backlink"
+        >{lang === "ko" ? "← 글 목록" : "← All essays"}</a
+      >
     </footer>
   </main>
 </BaseLayout>
