@@ -7,31 +7,27 @@ const ko = lang === "ko";
 const isHome = Astro.url.pathname === "/";
 const isNovel = Astro.url.pathname.startsWith("/30months");
 const isEssay = Astro.url.pathname.startsWith("/essays");
+const isProject = Astro.url.pathname.startsWith("/projects");
 ---
 
 <nav
   class="site-nav"
   aria-label={ko ? "작업실 둘러보기" : "Explore the workshop"}
+  lang="en"
 >
-  <a href={isHome ? "#projects" : "/#projects"}
-    >{ko ? "프로젝트" : "Projects"}</a
-  >
-  <a href="/30months/" aria-current={isNovel ? "page" : undefined}
-    >{ko ? "소설" : "Fiction"}</a
-  >
-  <a
-    href={isHome ? "#essays" : "/#essays"}
-    aria-current={isEssay ? "location" : undefined}
-  >
-    {ko ? "글" : "Essays"}
+  <a href="/" aria-current={isHome ? "page" : isEssay ? "location" : undefined}>
+    Essays
   </a>
+  <a href="/projects/" aria-current={isProject ? "page" : undefined}>Projects</a
+  >
+  <a href="/30months/" aria-current={isNovel ? "page" : undefined}>Fiction</a>
 </nav>
 
 <style>
   .site-nav {
     display: flex;
     align-items: center;
-    gap: clamp(14px, 3vw, 26px);
+    gap: clamp(12px, 3vw, 24px);
     font-family: var(--font-sans, var(--archive-sans, sans-serif));
     font-size: 13px;
     line-height: 1.5;
@@ -49,5 +45,9 @@ const isEssay = Astro.url.pathname.startsWith("/essays");
     color: var(--text, var(--archive-ink));
     text-decoration: underline;
     text-underline-offset: 6px;
+  }
+  .site-nav a[aria-current] {
+    font-weight: 600;
+    text-decoration-thickness: 2px;
   }
 </style>

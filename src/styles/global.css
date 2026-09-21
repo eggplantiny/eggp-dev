@@ -59,7 +59,7 @@ html {
 
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
@@ -97,9 +97,6 @@ button {
   padding-top: 24px;
 }
 
-.workshop-shell {
-  width: min(100%, 1040px);
-}
 :focus-visible {
   outline: 2px solid var(--accent-hover);
   outline-offset: 5px;
@@ -189,6 +186,12 @@ button {
   color: var(--text-muted);
   font-family: var(--font-sans);
   font-size: 11px;
+}
+.site-footer__about .site-footer__slogan {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-muted);
 }
 .site-footer__about > a {
   display: inline-flex;
@@ -800,7 +803,10 @@ button {
 
 @media (max-width: 720px) {
   .site-header__actions {
-    gap: 12px;
+    gap: 8px;
+  }
+  .site-header__inner {
+    gap: 8px;
   }
   .site-header {
     padding-top: 12px;

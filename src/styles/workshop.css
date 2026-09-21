@@ -1,288 +1,214 @@
-.workshop {
-  padding-top: 66px;
-  padding-bottom: 88px;
+.collection-page {
+  padding-top: 58px;
+  padding-bottom: 64px;
 }
-.workshop-intro {
-  padding-bottom: 48px;
+
+#essays {
+  scroll-margin-top: 32px;
 }
-.workshop-eyebrow,
-.workshop-section-label {
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+
+.collection-intro {
+  margin-bottom: 38px;
 }
-.workshop-eyebrow {
-  margin: 0 0 22px;
-}
-.workshop-intro h1 {
+
+.collection-intro h1 {
   margin: 0;
   font-family: var(--font-serif);
-  font-size: clamp(37px, 5.2vw, 62px);
+  font-size: 38px;
   font-weight: 400;
-  letter-spacing: -0.035em;
-  line-height: 1.08;
-  text-wrap: balance;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
 }
-.workshop-intro-bottom {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  margin-top: 24px;
-}
-.workshop-intro-bottom p {
-  margin: 0;
+
+.collection-intro p {
+  margin: 14px 0 0;
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.8;
   word-break: keep-all;
 }
-.text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 44px;
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: underline;
-  text-decoration-color: var(--border);
-  text-underline-offset: 5px;
-  transition: text-decoration-color 160ms ease;
-}
-.text-link:hover {
-  text-decoration-color: currentColor;
-}
-.text-link--secondary,
-.workshop-about-link {
-  color: var(--text-muted);
-}
-.workshop-works {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-.workshop-works > section {
-  min-width: 0;
-  padding: 24px 0 20px;
-  scroll-margin-top: 24px;
-}
-.workshop-works > .workshop-project {
-  padding-right: 36px;
-}
-.workshop-works > .workshop-fiction {
-  padding-left: 36px;
-  border-left: 1px solid var(--border);
-}
-.workshop-section-label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.workshop-project h2 {
-  margin: 28px 0 14px;
-  font-family: var(--font-serif);
-  font-size: 42px;
-  font-weight: 500;
-  letter-spacing: -0.025em;
-  line-height: 1;
-}
-.workshop-project h2 a,
-.workshop-fiction h2 a {
-  text-decoration: none;
-}
-.workshop-project h2 a span {
-  display: inline-block;
-  margin-left: 8px;
-  color: var(--text-muted);
-  font-family: var(--font-sans);
-  font-size: 24px;
-  vertical-align: middle;
-}
-.workshop-work-description {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 14px;
-  line-height: 1.85;
-  word-break: keep-all;
-}
-.workshop-project-preview {
-  margin: 24px 0 10px;
-}
-.workshop-project-preview a {
-  display: block;
-  background: #0b0e14;
-}
-.workshop-project-preview img {
-  width: 100%;
-  height: auto;
-}
-.workshop-project-preview figcaption {
-  margin-top: 10px;
-  color: var(--text-muted);
-  font-size: 11px;
-}
-.workshop-work-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-  margin-top: 12px;
-}
-.workshop-fiction-body {
-  padding-top: 28px;
-}
-.workshop-fiction-subtitle {
-  margin: 0 0 12px;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-}
-.workshop-fiction h2 {
-  margin: 0;
-  font-size: 62px;
-  font-weight: 400;
-  letter-spacing: -0.065em;
-  line-height: 1.1;
-}
-.workshop-fiction-hook {
-  margin: 22px 0 16px;
-  font-size: 22px;
-  font-weight: 400;
-  letter-spacing: -0.025em;
-  line-height: 1.6;
-}
-.workshop-fiction-meta {
-  margin: 24px 0 0;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-.workshop-essays {
-  padding-top: 44px;
-  scroll-margin-top: 24px;
-}
-.workshop-essays-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-  margin: 24px 0 28px;
-}
-.workshop-essays-heading h2 {
-  margin: 0;
-  font-size: 23px;
-  font-weight: 500;
-  letter-spacing: -0.035em;
-}
-.workshop-essays-heading p {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-.workshop-essays-heading p span {
-  margin-left: 8px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-}
-.workshop-essay-list {
+
+.writing-list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.workshop-essay-list li {
-  display: grid;
-  grid-template-columns: 105px 1fr auto;
-  gap: 20px;
-  padding: 26px 0;
-  border-top: 1px solid var(--border);
+
+.writing-list li + li {
+  margin-top: 26px;
 }
-.workshop-essay-list time {
-  padding-top: 4px;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 11px;
-}
-.workshop-essay-copy h3 {
+
+.writing-list h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.035em;
+  line-height: 1.5;
 }
-.workshop-essay-copy h3 a {
-  text-decoration: none;
-}
-.workshop-essay-copy h3 a:hover {
-  text-decoration: underline;
-  text-underline-offset: 5px;
-}
-.workshop-essay-copy p {
-  max-width: 560px;
-  margin: 10px 0 0;
-  color: var(--text-muted);
-  font-size: 13px;
-  line-height: 1.8;
-  word-break: keep-all;
-}
-.workshop-essay-languages {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-.workshop-essay-languages a {
+
+.writing-list h2 a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  text-decoration: none;
+}
+
+.writing-list h2 a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
+
+.writing-summary {
+  margin: 4px 0 6px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.8;
+  word-break: keep-all;
+}
+
+.writing-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 22px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.writing-meta time {
+  font-variant-numeric: tabular-nums;
+}
+
+.writing-languages {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.writing-languages a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--border);
+}
+
+.writing-languages a:hover {
+  color: var(--text);
+  text-decoration-color: currentColor;
+}
+
+.collection-empty {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.project-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.project-heading h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.project-heading h2 a {
+  text-decoration: none;
+}
+
+.project-heading h2 span {
+  margin-left: 8px;
+  font-family: var(--font-sans);
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+.project-category {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+}
+
+.project-description {
+  margin: 16px 0 8px;
+  font-size: 15px;
+  line-height: 1.8;
+  word-break: keep-all;
+}
+
+.project-detail {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.8;
+  word-break: keep-all;
+}
+
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 12px 0 20px;
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 13px;
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 5px;
+}
+
+.text-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.project-preview {
+  margin: 0;
+}
+
+.project-preview a {
+  display: block;
+  background: #0b0e14;
+}
+
+.project-preview img {
+  width: 100%;
+  height: auto;
+}
+
+.project-preview figcaption {
+  margin-top: 12px;
   color: var(--text-muted);
   font-size: 11px;
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 
 @media (max-width: 720px) {
-  .workshop {
-    padding-top: 42px;
-    padding-bottom: 48px;
+  .collection-page {
+    padding-top: 38px;
+    padding-bottom: 42px;
   }
-  .workshop-intro {
-    padding-bottom: 32px;
+  .collection-intro {
+    margin-bottom: 28px;
   }
-  .workshop-intro-bottom,
-  .workshop-essays-heading {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+  .collection-intro h1 {
+    font-size: 34px;
   }
-  .workshop-intro-bottom p {
-    font-size: 14px;
+  .writing-list h2 {
+    font-size: 21px;
   }
-  .workshop-title-break {
-    display: none;
-  }
-  .workshop-works {
-    grid-template-columns: 1fr;
-  }
-  .workshop-works > .workshop-project {
-    padding-right: 0;
-  }
-  .workshop-works > .workshop-fiction {
-    padding: 24px 0 20px;
-    border-left: 0;
-    border-top: 1px solid var(--border);
-  }
-  .workshop-fiction-body {
-    padding: 26px 0 8px;
-  }
-  .workshop-fiction h2 {
-    font-size: 56px;
-  }
-  .workshop-essay-list li {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    padding: 22px 0;
-  }
-  .workshop-essay-languages {
-    gap: 20px;
+  .writing-list li + li {
+    margin-top: 24px;
   }
 }

@@ -8,6 +8,7 @@ const output = path.resolve("dist/client");
 const readPage = (route) =>
   readFile(path.join(output, route, "index.html"), "utf8");
 const home = await readPage("");
+const projects = await readPage("projects");
 const novel = await readPage("30months");
 const contentFiles = (await readdir("public/30months/content")).filter((file) =>
   /^(part-\d{2}|epilogue)\.json$/.test(file),
@@ -20,17 +21,16 @@ const published = await Promise.all(
   ),
 );
 
-test("workshop exposes projects, fiction, and both essay languages in server HTML", () => {
+test("essays lead the home, with both languages and a quiet footer slogan", () => {
   assert.match(home, /a place where i make/);
   for (const href of [
-    "https://conn.eggp.dev/ko/",
-    "https://github.com/eggp-dev/conn",
     "https://github.com/eggp-dev",
+    "/projects/",
     "/30months/",
-    "#projects",
-    "#essays",
     "/essays/ko/compiling-a-novel/",
     "/essays/en/compiling-a-novel/",
+    "/essays/ko/superintelligence-in-my-hands/",
+    "/essays/en/superintelligence-in-my-hands/",
   ]) {
     assert.ok(
       home.includes(`href="${href}"`),
@@ -40,6 +40,61 @@ test("workshop exposes projects, fiction, and both essay languages in server HTM
   assert.equal((home.match(/<h1(?:\s|>)/g) ?? []).length, 1);
   assert.match(home, /<html[^>]+lang="ko"/);
   assert.match(home, /id="main-content"/);
+  assert.match(home, /id="essays"/);
+  assert.match(home, /<h1[^>]*>Essays<\/h1>/);
+  assert.ok(!home.includes("https://conn.eggp.dev"));
+  assert.ok(!home.includes("workshop-works"));
+  assert.ok(
+    home.indexOf('class="writing-list"') < home.indexOf("a place where i make"),
+  );
+  const main = home.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1];
+  assert.ok(main && !main.includes("<img"));
+});
+
+test("projects have their own indexable page and real product destinations", () => {
+  assert.equal((projects.match(/<h1(?:\s|>)/g) ?? []).length, 1);
+  assert.match(projects, /<h1[^>]*>Projects<\/h1>/);
+  for (const href of [
+    "https://conn.eggp.dev/ko/",
+    "https://github.com/eggp-dev/conn",
+  ]) {
+    assert.ok(projects.includes(`href="${href}"`));
+  }
+  assert.ok(projects.includes('src="/projects/conn-handoff.png"'));
+  const schemaText = projects.match(
+    /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/,
+  )?.[1];
+  const schema = JSON.parse(schemaText);
+  assert.equal(schema["@type"], "CollectionPage");
+  assert.equal(schema.url, "https://eggp.dev/projects/");
+});
+
+test("ordered page tabs identify the active section, including both essay languages", async () => {
+  for (const [html, currentHref, currentValue] of [
+    [home, "/", "page"],
+    [projects, "/projects/", "page"],
+    [novel, "/30months/", "page"],
+    [await readPage("essays/ko/compiling-a-novel"), "/", "location"],
+    [await readPage("essays/en/compiling-a-novel"), "/", "location"],
+  ]) {
+    const nav = html.match(
+      /<nav\b[^>]*class="site-nav"[^>]*>([\s\S]*?)<\/nav>/,
+    )?.[1];
+    assert.ok(nav, "shared page navigation must be rendered on the server");
+    const links = [...nav.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)];
+    assert.deepEqual(
+      links.map((link) => link[2].trim()),
+      ["Essays", "Projects", "Fiction"],
+    );
+    assert.deepEqual(
+      links.map((link) => link[1].match(/href="([^"]+)"/)[1]),
+      ["/", "/projects/", "/30months/"],
+    );
+    const active = links.filter((link) => link[1].includes("aria-current="));
+    assert.equal(active.length, 1);
+    assert.ok(active[0][1].includes(`href="${currentHref}"`));
+    assert.ok(active[0][1].includes(`aria-current="${currentValue}"`));
+  }
 });
 
 test("novel introduction and contents describe exactly the published release", () => {
@@ -65,7 +120,6 @@ test("novel introduction and contents describe exactly the published release", (
     published.length === 31 &&
     published.some((document) => document.part === "epilogue");
   assert.equal(novel.includes("완결"), complete);
-  assert.equal(home.includes("완결"), complete);
 });
 
 test("every published reader retains its URL and returns directly to the contents", async () => {
@@ -84,6 +138,7 @@ test("every published reader retains its URL and returns directly to the content
 test("GA Arguments queue, Vercel analytics, canonical URLs, and indexability survive", async () => {
   const routes = [
     "",
+    "projects",
     "30months",
     ...published.map((document) => `30months/part/${document.part}`),
     "essays/ko/compiling-a-novel",
@@ -109,6 +164,7 @@ test("GA Arguments queue, Vercel analytics, canonical URLs, and indexability sur
 test("landing links, fragments, and preview image resolve in the built site", async () => {
   for (const [route, html] of [
     ["/", home],
+    ["/projects/", projects],
     ["/30months/", novel],
   ]) {
     for (const match of html.matchAll(/<a\b[^>]*href="([^"]+)"/g)) {
@@ -126,7 +182,8 @@ test("landing links, fragments, and preview image resolve in the built site", as
     (await stat(path.join(output, "projects/conn-handoff.png"))).size > 1000,
   );
   // Guard against silently reintroducing the old one-pixel social placeholder.
-  for (const html of [home, novel]) assert.ok(!html.includes("og-default.png"));
+  for (const html of [home, projects, novel])
+    assert.ok(!html.includes("og-default.png"));
   const icon = await readFile(path.join(output, "icon.png"));
   assert.ok(icon.readUInt32BE(16) >= 200 && icon.readUInt32BE(20) >= 200);
 });

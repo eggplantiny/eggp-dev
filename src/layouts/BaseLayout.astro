@@ -13,7 +13,6 @@ interface Props {
   ogType?: "website" | "article";
   noindex?: boolean;
   lang?: string;
-  wide?: boolean;
   publishedTime?: Date;
   tags?: string[];
   keywords?: string[];
@@ -34,7 +33,6 @@ const {
   ogType = "website",
   noindex = false,
   lang = "en",
-  wide = false,
   publishedTime,
   tags = [],
   keywords = [],
@@ -98,10 +96,10 @@ const structuredData =
       }
     : {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        name: siteName,
+        "@type": Astro.url.pathname === "/" ? "WebSite" : "CollectionPage",
+        name: Astro.url.pathname === "/" ? siteName : title,
         description: metaDescription,
-        url: "https://eggp.dev",
+        url: canonicalUrl,
         inLanguage: lang,
         author: personSchema,
       };
@@ -242,13 +240,7 @@ const structuredData =
       >{lang === "ko" ? "본문으로 건너뛰기" : "Skip to content"}</a
     >
     <header class="site-header">
-      <div
-        class:list={[
-          "page-shell",
-          "site-header__inner",
-          wide && "workshop-shell",
-        ]}
-      >
+      <div class="page-shell site-header__inner">
         <a href="/" class="site-title">eggp.</a>
         <div class="site-header__actions">
           <SiteNav lang={lang} />
@@ -270,15 +262,12 @@ const structuredData =
     <slot />
 
     <footer class="site-footer">
-      <div
-        class:list={[
-          "page-shell",
-          "site-footer__inner",
-          wide && "workshop-shell",
-        ]}
-      >
+      <div class="page-shell site-footer__inner">
         <div class="site-footer__about">
           <p>eggp. <span>by eggplantiny</span></p>
+          <p class="site-footer__slogan" lang="en">
+            a place where i make what i want to make.
+          </p>
           <a href="https://github.com/eggp-dev"
             >{lang === "ko" ? "프로젝트 저장소" : "Project repositories"}
             <span aria-hidden="true">↗</span></a

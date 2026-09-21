@@ -21,7 +21,7 @@
 
 html,
 body.archive-site {
-  min-width: 320px;
+  min-width: 0;
   margin: 0;
   background: var(--archive-paper);
   color: var(--archive-ink);
